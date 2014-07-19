@@ -13,6 +13,7 @@ class TypeList : public InternalTypeList<TypeList>
 {
 
 public:
+    static const unsigned Size = InternalSize::impl<Pack...>::value;
 
 };
 

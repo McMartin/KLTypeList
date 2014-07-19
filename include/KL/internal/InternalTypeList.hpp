@@ -11,6 +11,14 @@ class InternalTypeList
 {
 
 protected:
+    struct InternalSize
+    {
+        template <typename... Pack>
+        struct impl
+        {
+            static const unsigned value = sizeof...(Pack);
+        };
+    };
 
 };
 
