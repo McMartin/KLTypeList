@@ -1,1 +1,16 @@
-script: true
+language: cpp
+
+env:
+    matrix:
+        - COMPILER=clang++-3.4
+        - COMPILER=g++-4.7
+        - COMPILER=g++-4.8
+
+install:
+    - sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
+    - sudo apt-get update
+    - sudo apt-get install $COMPILER
+    - sudo apt-get install python
+
+script:
+    - python test-features.py --compiler $COMPILER
