@@ -11,6 +11,15 @@ class InternalTypeList
 {
 
 protected:
+    struct InternalEmpty
+    {
+        template <typename... Pack>
+        struct impl
+        {
+            static const bool value = (sizeof...(Pack) == 0);
+        };
+    };
+
     struct InternalSize
     {
         template <typename... Pack>
