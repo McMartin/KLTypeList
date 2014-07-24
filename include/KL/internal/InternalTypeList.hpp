@@ -32,6 +32,27 @@ protected:
         };
     };
 
+    struct InternalCount
+    {
+        template <typename, typename...>
+        struct impl
+        {
+            static const unsigned value = 0;
+        };
+
+        template <typename Element, typename Head, typename... Tail>
+        struct impl<Element, Head, Tail...>
+        {
+            static const unsigned value = impl<Element, Tail...>::value;
+        };
+
+        template <typename Element, typename... Tail>
+        struct impl<Element, Element, Tail...>
+        {
+            static const unsigned value = 1 + impl<Element, Tail...>::value;
+        };
+    };
+
     struct InternalEmpty
     {
         template <typename... Pack>

@@ -23,6 +23,12 @@ public:
         return InternalContains::impl<Element, Pack...>::value;
     }
 
+    template <typename Element>
+    static constexpr unsigned Count()
+    {
+        return InternalCount::impl<Element, Pack...>::value;
+    }
+
 };
 
 } // namespace KL
