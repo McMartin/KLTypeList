@@ -108,6 +108,15 @@ protected:
         };
     };
 
+    struct InternalPopFront
+    {
+        template <typename Head, typename... Tail>
+        struct impl
+        {
+            using type = List<Tail...>;
+        };
+    };
+
     struct InternalPushBack
     {
         template <typename Element, typename... Pack>

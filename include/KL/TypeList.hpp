@@ -37,6 +37,8 @@ public:
     template <typename Element>
     using PushBack = typename InternalPushBack::impl<Element, Pack...>::type;
 
+    using PopFront = typename InternalPopFront::impl<Pack...>::type;
+
 };
 
 template <>
