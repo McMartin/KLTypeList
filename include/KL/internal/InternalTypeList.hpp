@@ -108,6 +108,15 @@ protected:
         };
     };
 
+    struct InternalPushFront
+    {
+        template <typename Element, typename... Pack>
+        struct impl
+        {
+            using type = List<Element, Pack...>;
+        };
+    };
+
     struct InternalSize
     {
         template <typename ValueType, typename... Pack>
