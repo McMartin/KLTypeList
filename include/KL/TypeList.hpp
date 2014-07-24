@@ -17,6 +17,12 @@ public:
 
     static const bool Empty = InternalEmpty::impl<Pack...>::value;
 
+    template <typename Element>
+    static constexpr bool Contains()
+    {
+        return InternalContains::impl<Element, Pack...>::value;
+    }
+
 };
 
 } // namespace KL

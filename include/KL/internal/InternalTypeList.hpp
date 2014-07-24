@@ -11,6 +11,27 @@ class InternalTypeList
 {
 
 protected:
+    struct InternalContains
+    {
+        template <typename, typename...>
+        struct impl
+        {
+            static const bool value = false;
+        };
+
+        template <typename Element, typename Head, typename... Tail>
+        struct impl<Element, Head, Tail...>
+        {
+            static const bool value = impl<Element, Tail...>::value;
+        };
+
+        template <typename Element, typename... Tail>
+        struct impl<Element, Element, Tail...>
+        {
+            static const bool value = true;
+        };
+    };
+
     struct InternalEmpty
     {
         template <typename... Pack>
