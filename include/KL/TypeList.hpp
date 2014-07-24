@@ -29,6 +29,8 @@ public:
 
     using Front = typename InternalFront::impl<Pack...>::type;
 
+    using Back = typename InternalBack::impl<Pack...>::type;
+
 };
 
 template <>

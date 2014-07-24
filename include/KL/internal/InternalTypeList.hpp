@@ -30,6 +30,21 @@ protected:
         };
     };
 
+    struct InternalBack
+    {
+        template <typename, typename... Tail>
+        struct impl
+        {
+            using type = typename impl<Tail...>::type;
+        };
+
+        template <typename Head>
+        struct impl<Head>
+        {
+            using type = Head;
+        };
+    };
+
     struct InternalContains
     {
         template <typename, typename...>
