@@ -45,6 +45,18 @@ protected:
         };
     };
 
+    struct InternalConcat
+    {
+        template <typename, typename>
+        struct impl;
+
+        template <typename... LeftPack, typename... RightPack>
+        struct impl<List<LeftPack...>, List<RightPack...>>
+        {
+            using type = List<LeftPack..., RightPack...>;
+        };
+    };
+
     struct InternalContains
     {
         template <typename, typename...>
