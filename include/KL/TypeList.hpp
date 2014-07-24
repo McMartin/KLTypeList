@@ -34,6 +34,9 @@ public:
     template <typename Element>
     using PushFront = typename InternalPushFront::impl<Element, Pack...>::type;
 
+    template <typename Element>
+    using PushBack = typename InternalPushBack::impl<Element, Pack...>::type;
+
 };
 
 template <>
@@ -54,6 +57,9 @@ public:
 
     template <typename Element>
     using PushFront = TypeList<Element>;
+
+    template <typename Element>
+    using PushBack = TypeList<Element>;
 
 };
 

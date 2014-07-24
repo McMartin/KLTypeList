@@ -108,6 +108,15 @@ protected:
         };
     };
 
+    struct InternalPushBack
+    {
+        template <typename Element, typename... Pack>
+        struct impl
+        {
+            using type = List<Pack..., Element>;
+        };
+    };
+
     struct InternalPushFront
     {
         template <typename Element, typename... Pack>
