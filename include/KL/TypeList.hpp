@@ -24,6 +24,9 @@ public:
     template <typename Element, typename ValueType = unsigned>
     using Count = typename InternalCount::impl<ValueType, Element, Pack...>::type;
 
+    template <unsigned Pos>
+    using At = typename InternalAt::impl<Pos, Pack...>::type;
+
 };
 
 template <>

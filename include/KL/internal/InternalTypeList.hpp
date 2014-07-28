@@ -13,6 +13,23 @@ class InternalTypeList
 {
 
 protected:
+    struct InternalAt
+    {
+        template <unsigned Pos, typename, typename... Tail>
+        struct impl
+        {
+            static_assert(sizeof...(Tail) + 1 > Pos, "'Pos' is out of range");
+
+            using type = typename impl<Pos - 1, Tail...>::type;
+        };
+
+        template <typename Head, typename... Tail>
+        struct impl<0, Head, Tail...>
+        {
+            using type = Head;
+        };
+    };
+
     struct InternalContains
     {
         template <typename, typename...>
