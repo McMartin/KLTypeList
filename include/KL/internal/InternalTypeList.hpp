@@ -84,6 +84,15 @@ protected:
         };
     };
 
+    struct InternalFront
+    {
+        template <typename Head, typename...>
+        struct impl
+        {
+            using type = Head;
+        };
+    };
+
     struct InternalSize
     {
         template <typename ValueType, typename... Pack>

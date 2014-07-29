@@ -27,6 +27,8 @@ public:
     template <unsigned Pos>
     using At = typename InternalAt::impl<Pos, Pack...>::type;
 
+    using Front = typename InternalFront::impl<Pack...>::type;
+
 };
 
 template <>
