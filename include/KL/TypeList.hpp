@@ -26,6 +26,24 @@ public:
 
 };
 
+template <>
+class TypeList<> : public InternalTypeList<TypeList>
+{
+
+public:
+    template <typename ValueType = unsigned>
+    using Size = std::integral_constant<ValueType, 0>;
+
+    using Empty = std::true_type;
+
+    template <typename Element>
+    using Contains = std::false_type;
+
+    template <typename Element, typename ValueType = unsigned>
+    using Count = std::integral_constant<ValueType, 0>;
+
+};
+
 } // namespace KL
 
 #endif // KL_TYPE_LIST
