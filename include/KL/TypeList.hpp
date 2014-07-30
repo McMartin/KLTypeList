@@ -39,6 +39,8 @@ public:
 
     using PopFront = typename InternalPopFront::impl<Pack...>::type;
 
+    using PopBack = typename InternalPopBack::impl<Pack...>::type;
+
 };
 
 template <>

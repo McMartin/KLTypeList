@@ -129,6 +129,24 @@ protected:
         };
     };
 
+    struct InternalPopBack
+    {
+        template <typename Head, typename... Tail>
+        struct impl
+        {
+            using type = typename InternalConcat::template impl<
+                List<Head>,
+                typename impl<Tail...>::type
+            >::type;
+        };
+
+        template <typename Head>
+        struct impl<Head>
+        {
+            using type = List<>;
+        };
+    };
+
     struct InternalPushBack
     {
         template <typename Element, typename... Pack>
