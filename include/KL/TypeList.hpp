@@ -15,13 +15,10 @@ class TypeList : public InternalTypeList<TypeList>
 public:
     static const unsigned Size = InternalSize::impl<Pack...>::value;
 
-    static const bool Empty = InternalEmpty::impl<Pack...>::value;
+    using Empty = typename InternalEmpty::impl<Pack...>::type;
 
     template <typename Element>
-    static constexpr bool Contains()
-    {
-        return InternalContains::impl<Element, Pack...>::value;
-    }
+    using Contains = typename InternalContains::impl<Element, Pack...>::type;
 
     template <typename Element>
     static constexpr unsigned Count()

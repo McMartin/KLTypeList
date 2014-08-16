@@ -3,6 +3,8 @@
 #ifndef KL_INTERNAL_TYPE_LIST
 #define KL_INTERNAL_TYPE_LIST
 
+#include <type_traits>
+
 namespace KL
 {
 
@@ -16,19 +18,19 @@ protected:
         template <typename, typename...>
         struct impl
         {
-            static const bool value = false;
+            using type = std::false_type;
         };
 
         template <typename Element, typename Head, typename... Tail>
         struct impl<Element, Head, Tail...>
         {
-            static const bool value = impl<Element, Tail...>::value;
+            using type = typename impl<Element, Tail...>::type;
         };
 
         template <typename Element, typename... Tail>
         struct impl<Element, Element, Tail...>
         {
-            static const bool value = true;
+            using type = std::true_type;
         };
     };
 
@@ -58,7 +60,7 @@ protected:
         template <typename... Pack>
         struct impl
         {
-            static const bool value = (sizeof...(Pack) == 0);
+            using type = std::integral_constant<bool, (sizeof...(Pack) == 0)>;
         };
     };
 
