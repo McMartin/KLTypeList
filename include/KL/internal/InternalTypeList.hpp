@@ -148,6 +148,37 @@ protected:
         };
     };
 
+    struct InternalInsert
+    {
+        template <unsigned, typename, typename...>
+        struct impl;
+
+        template <unsigned Pos, typename Element, typename Head, typename... Tail>
+        struct impl<Pos, Element, Head, Tail...>
+        {
+            static_assert(Pos <= 1 + sizeof...(Tail), "ERROR: 'Pos' is out of range");
+
+            using type = typename InternalConcat::template impl<
+                List<Head>,
+                typename impl<Pos - 1, Element, Tail...>::type
+            >::type;
+        };
+
+        template <typename Element, typename Head, typename... Tail>
+        struct impl<0, Element, Head, Tail...>
+        {
+            using type = List<Element, Head, Tail...>;
+        };
+
+        template <unsigned Pos, typename Element>
+        struct impl<Pos, Element>
+        {
+            static_assert(Pos == 0, "ERROR: 'Pos' is out of range");
+
+            using type = List<Element>;
+        };
+    };
+
     struct InternalPopFront
     {
         template <typename Head, typename... Tail>
