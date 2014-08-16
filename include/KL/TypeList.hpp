@@ -41,6 +41,9 @@ public:
 
     using PopBack = typename InternalPopBack::impl<Pack...>::type;
 
+    template <unsigned Pos>
+    using Erase = typename InternalErase::impl<Pos, Pack...>::type;
+
 };
 
 template <>

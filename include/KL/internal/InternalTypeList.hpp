@@ -111,6 +111,26 @@ protected:
         };
     };
 
+    struct InternalErase
+    {
+        template <unsigned Pos, typename Head, typename... Tail>
+        struct impl
+        {
+            static_assert(sizeof...(Tail) + 1 > Pos, "'Pos' is out of range");
+
+            using type = typename InternalConcat::template impl<
+                List<Head>,
+                typename impl<Pos - 1, Tail...>::type
+            >::type;
+        };
+
+        template <typename Head, typename... Tail>
+        struct impl<0, Head, Tail...>
+        {
+            using type = List<Tail...>;
+        };
+    };
+
     struct InternalFront
     {
         template <typename Head, typename...>
