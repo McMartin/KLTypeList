@@ -13,6 +13,38 @@ class InternalTypeList
 {
 
 protected:
+    struct InternalAt
+    {
+        template <unsigned Pos, typename, typename... Tail>
+        struct impl
+        {
+            static_assert(sizeof...(Tail) + 1 > Pos, "'Pos' is out of range");
+
+            using type = typename impl<Pos - 1, Tail...>::type;
+        };
+
+        template <typename Head, typename... Tail>
+        struct impl<0, Head, Tail...>
+        {
+            using type = Head;
+        };
+    };
+
+    struct InternalBack
+    {
+        template <typename, typename... Tail>
+        struct impl
+        {
+            using type = typename impl<Tail...>::type;
+        };
+
+        template <typename Head>
+        struct impl<Head>
+        {
+            using type = Head;
+        };
+    };
+
     struct InternalContains
     {
         template <typename, typename...>
@@ -64,6 +96,15 @@ protected:
         struct impl
         {
             using type = std::integral_constant<bool, (sizeof...(Pack) == 0)>;
+        };
+    };
+
+    struct InternalFront
+    {
+        template <typename Head, typename...>
+        struct impl
+        {
+            using type = Head;
         };
     };
 

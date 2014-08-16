@@ -24,6 +24,31 @@ public:
     template <typename Element, typename ValueType = unsigned>
     using Count = typename InternalCount::impl<ValueType, Element, Pack...>::type;
 
+    template <unsigned Pos>
+    using At = typename InternalAt::impl<Pos, Pack...>::type;
+
+    using Front = typename InternalFront::impl<Pack...>::type;
+
+    using Back = typename InternalBack::impl<Pack...>::type;
+
+};
+
+template <>
+class TypeList<> : public InternalTypeList<TypeList>
+{
+
+public:
+    template <typename ValueType = unsigned>
+    using Size = std::integral_constant<ValueType, 0>;
+
+    using Empty = std::true_type;
+
+    template <typename Element>
+    using Contains = std::false_type;
+
+    template <typename Element, typename ValueType = unsigned>
+    using Count = std::integral_constant<ValueType, 0>;
+
 };
 
 } // namespace KL
