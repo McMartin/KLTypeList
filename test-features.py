@@ -139,10 +139,8 @@ class Test{feature_name}
 
 
 def get_result_type(return_type):
-    if return_type == 'Boolean':
-        return 'const bool'
-    if return_type == 'Integer':
-        return 'const unsigned'
+    if return_type == 'Boolean' or return_type == 'Integer':
+        return 'const auto'
     if return_type == 'Type' or return_type == 'TypeList':
         return 'using'
 
