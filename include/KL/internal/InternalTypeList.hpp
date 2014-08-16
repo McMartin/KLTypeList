@@ -45,6 +45,18 @@ protected:
         };
     };
 
+    struct InternalConcat
+    {
+        template <typename, typename>
+        struct impl;
+
+        template <typename... LeftPack, typename... RightPack>
+        struct impl<List<LeftPack...>, List<RightPack...>>
+        {
+            using type = List<LeftPack..., RightPack...>;
+        };
+    };
+
     struct InternalContains
     {
         template <typename, typename...>
@@ -105,6 +117,51 @@ protected:
         struct impl
         {
             using type = Head;
+        };
+    };
+
+    struct InternalPopFront
+    {
+        template <typename Head, typename... Tail>
+        struct impl
+        {
+            using type = List<Tail...>;
+        };
+    };
+
+    struct InternalPopBack
+    {
+        template <typename Head, typename... Tail>
+        struct impl
+        {
+            using type = typename InternalConcat::template impl<
+                List<Head>,
+                typename impl<Tail...>::type
+            >::type;
+        };
+
+        template <typename Head>
+        struct impl<Head>
+        {
+            using type = List<>;
+        };
+    };
+
+    struct InternalPushBack
+    {
+        template <typename Element, typename... Pack>
+        struct impl
+        {
+            using type = List<Pack..., Element>;
+        };
+    };
+
+    struct InternalPushFront
+    {
+        template <typename Element, typename... Pack>
+        struct impl
+        {
+            using type = List<Element, Pack...>;
         };
     };
 

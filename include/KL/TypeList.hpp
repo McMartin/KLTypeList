@@ -31,6 +31,16 @@ public:
 
     using Back = typename InternalBack::impl<Pack...>::type;
 
+    template <typename Element>
+    using PushFront = typename InternalPushFront::impl<Element, Pack...>::type;
+
+    template <typename Element>
+    using PushBack = typename InternalPushBack::impl<Element, Pack...>::type;
+
+    using PopFront = typename InternalPopFront::impl<Pack...>::type;
+
+    using PopBack = typename InternalPopBack::impl<Pack...>::type;
+
 };
 
 template <>
@@ -48,6 +58,12 @@ public:
 
     template <typename Element, typename ValueType = unsigned>
     using Count = std::integral_constant<ValueType, 0>;
+
+    template <typename Element>
+    using PushFront = TypeList<Element>;
+
+    template <typename Element>
+    using PushBack = TypeList<Element>;
 
 };
 
