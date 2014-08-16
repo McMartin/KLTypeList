@@ -3,6 +3,8 @@
 #ifndef KL_INTERNAL_TYPE_LIST
 #define KL_INTERNAL_TYPE_LIST
 
+#include <type_traits>
+
 namespace KL
 {
 
@@ -16,40 +18,43 @@ protected:
         template <typename, typename...>
         struct impl
         {
-            static const bool value = false;
+            using type = std::false_type;
         };
 
         template <typename Element, typename Head, typename... Tail>
         struct impl<Element, Head, Tail...>
         {
-            static const bool value = impl<Element, Tail...>::value;
+            using type = typename impl<Element, Tail...>::type;
         };
 
         template <typename Element, typename... Tail>
         struct impl<Element, Element, Tail...>
         {
-            static const bool value = true;
+            using type = std::true_type;
         };
     };
 
     struct InternalCount
     {
-        template <typename, typename...>
+        template <typename ValueType, typename, typename...>
         struct impl
         {
-            static const unsigned value = 0;
+            using type = std::integral_constant<ValueType, 0>;
         };
 
-        template <typename Element, typename Head, typename... Tail>
-        struct impl<Element, Head, Tail...>
+        template <typename ValueType, typename Element, typename Head, typename... Tail>
+        struct impl<ValueType, Element, Head, Tail...>
         {
-            static const unsigned value = impl<Element, Tail...>::value;
+            using type = typename impl<ValueType, Element, Tail...>::type;
         };
 
-        template <typename Element, typename... Tail>
-        struct impl<Element, Element, Tail...>
+        template <typename ValueType, typename Element, typename... Tail>
+        struct impl<ValueType, Element, Element, Tail...>
         {
-            static const unsigned value = 1 + impl<Element, Tail...>::value;
+            using type = std::integral_constant<
+                ValueType,
+                1 + impl<ValueType, Element, Tail...>::type::value
+            >;
         };
     };
 
@@ -58,16 +63,16 @@ protected:
         template <typename... Pack>
         struct impl
         {
-            static const bool value = (sizeof...(Pack) == 0);
+            using type = std::integral_constant<bool, (sizeof...(Pack) == 0)>;
         };
     };
 
     struct InternalSize
     {
-        template <typename... Pack>
+        template <typename ValueType, typename... Pack>
         struct impl
         {
-            static const unsigned value = sizeof...(Pack);
+            using type = std::integral_constant<ValueType, sizeof...(Pack)>;
         };
     };
 

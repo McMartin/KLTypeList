@@ -84,29 +84,27 @@ def get_return_type(result):
 
 
 class Feature(object):
-    def __init__(self, line, name, has_arguments, is_function, return_type):
+    def __init__(self, line, name, has_arguments, return_type):
         self.line = line
         self.name = name
         self.has_arguments = has_arguments is not None
-        self.is_function = is_function is not None
         self.return_type = return_type
 
     @staticmethod
     def from_declaration(line):
         feature_declaration_regex = re.compile(
-            r'^(.+?)(?:<(.*)>)?(\(\))? -> (.+)$')
+            r'^(.+?)(?:<(.*)>)? -> (.+)$')
         match = feature_declaration_regex.search(line)
 
         if not match:
             return
 
-        name, has_arguments, is_function, return_type = match.groups()
-        return Feature(line, name, has_arguments, is_function, return_type)
+        name, has_arguments, return_type = match.groups()
+        return Feature(line, name, has_arguments, return_type)
 
     def run_test(self, feature_test, compiler):
         if self.name != feature_test.feature_name \
             or self.has_arguments != (feature_test.arguments is not None) \
-            or self.is_function != feature_test.is_function \
             or (self.return_type != get_return_type(feature_test.result)
                 and feature_test.result is not None):
                     print '[ %-6s ] %s\n' % ('ERROR', feature_test.line) \
@@ -139,10 +137,8 @@ class Test{feature_name}
 
 
 def get_result_type(return_type):
-    if return_type == 'Boolean':
-        return 'const bool'
-    if return_type == 'Integer':
-        return 'const unsigned'
+    if return_type == 'Boolean' or return_type == 'Integer':
+        return 'const auto'
     if return_type == 'Type' or return_type == 'TypeList':
         return 'using'
 
@@ -160,34 +156,33 @@ def get_assertion(return_type, result):
 
 class FeatureTest(object):
     def __init__(
-            self, line, feature_name, pack, arguments, is_function, result):
+            self, line, feature_name, pack, arguments, result):
         self.line = line
         self.feature_name = feature_name
         self.pack = pack
         self.arguments = arguments
-        self.is_function = is_function is not None
         self.result = result
 
     @staticmethod
     def from_declaration(line):
         feature_test_declaration_regex = re.compile(
-            r'^TypeList<(.*)>::(.+?)(?:<(.*)>)?(\(\))?'
+            r'^TypeList<(.*)>::(.+?)(?:<(.*)>)?'
             r' (?:NOT COMPILE|== (.+))$')
         match = feature_test_declaration_regex.search(line)
 
         if not match:
             return
 
-        pack, feature_name, arguments, is_function, result = match.groups()
+        pack, feature_name, arguments, result = match.groups()
         return FeatureTest(
-            line, feature_name, pack, arguments, is_function, result)
+            line, feature_name, pack, arguments, result)
 
     def run(self, feature, compiler):
         arguments = ''
         if feature.has_arguments:
             arguments += '<' + self.arguments + '>'
-        if feature.is_function:
-            arguments += '()'
+        if feature.return_type == 'Boolean' or feature.return_type == 'Integer':
+            arguments += '::value'
 
         test_code = test_code_skeleton.format(
             feature_name=feature.name,

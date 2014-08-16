@@ -13,21 +13,16 @@ class TypeList : public InternalTypeList<TypeList>
 {
 
 public:
-    static const unsigned Size = InternalSize::impl<Pack...>::value;
+    template <typename ValueType = unsigned>
+    using Size = typename InternalSize::impl<ValueType, Pack...>::type;
 
-    static const bool Empty = InternalEmpty::impl<Pack...>::value;
-
-    template <typename Element>
-    static constexpr bool Contains()
-    {
-        return InternalContains::impl<Element, Pack...>::value;
-    }
+    using Empty = typename InternalEmpty::impl<Pack...>::type;
 
     template <typename Element>
-    static constexpr unsigned Count()
-    {
-        return InternalCount::impl<Element, Pack...>::value;
-    }
+    using Contains = typename InternalContains::impl<Element, Pack...>::type;
+
+    template <typename Element, typename ValueType = unsigned>
+    using Count = typename InternalCount::impl<ValueType, Element, Pack...>::type;
 
 };
 
