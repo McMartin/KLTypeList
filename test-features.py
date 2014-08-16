@@ -184,7 +184,7 @@ class FeatureTest(object):
         arguments = ''
         if feature.has_arguments:
             arguments += '<' + self.arguments + '>'
-        if feature.return_type == 'Boolean':
+        if feature.return_type == 'Boolean' or feature.return_type == 'Integer':
             arguments += '::value'
         if feature.is_function:
             arguments += '()'
