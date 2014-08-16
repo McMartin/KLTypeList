@@ -113,19 +113,27 @@ protected:
 
     struct InternalErase
     {
-        template <unsigned Pos, typename Head, typename... Tail>
+        template <unsigned First, unsigned Last, typename Head, typename... Tail>
         struct impl
         {
-            static_assert(sizeof...(Tail) + 1 > Pos, "'Pos' is out of range");
+            static_assert(First <= Last, "'First' is out of range");
 
             using type = typename InternalConcat::template impl<
                 List<Head>,
-                typename impl<Pos - 1, Tail...>::type
+                typename impl<First - 1, Last - 1, Tail...>::type
             >::type;
         };
 
+        template <unsigned Last, typename Head, typename... Tail>
+        struct impl<0, Last, Head, Tail...>
+        {
+            static_assert(sizeof...(Tail) + 1 > Last, "'Last' is out of range");
+
+            using type = typename impl<0, Last - 1, Tail...>::type;
+        };
+
         template <typename Head, typename... Tail>
-        struct impl<0, Head, Tail...>
+        struct impl<0, 0, Head, Tail...>
         {
             using type = List<Tail...>;
         };

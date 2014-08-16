@@ -41,8 +41,8 @@ public:
 
     using PopBack = typename InternalPopBack::impl<Pack...>::type;
 
-    template <unsigned Pos>
-    using Erase = typename InternalErase::impl<Pos, Pack...>::type;
+    template <unsigned First, unsigned Last = First>
+    using Erase = typename InternalErase::impl<First, Last, Pack...>::type;
 
 };
 
