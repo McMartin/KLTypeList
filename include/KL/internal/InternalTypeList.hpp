@@ -111,12 +111,71 @@ protected:
         };
     };
 
+    struct InternalErase
+    {
+        template <unsigned First, unsigned Last, typename Head, typename... Tail>
+        struct impl
+        {
+            static_assert(First <= Last, "'First' is out of range");
+
+            using type = typename InternalConcat::template impl<
+                List<Head>,
+                typename impl<First - 1, Last - 1, Tail...>::type
+            >::type;
+        };
+
+        template <unsigned Last, typename Head, typename... Tail>
+        struct impl<0, Last, Head, Tail...>
+        {
+            static_assert(sizeof...(Tail) + 1 > Last, "'Last' is out of range");
+
+            using type = typename impl<0, Last - 1, Tail...>::type;
+        };
+
+        template <typename Head, typename... Tail>
+        struct impl<0, 0, Head, Tail...>
+        {
+            using type = List<Tail...>;
+        };
+    };
+
     struct InternalFront
     {
         template <typename Head, typename...>
         struct impl
         {
             using type = Head;
+        };
+    };
+
+    struct InternalInsert
+    {
+        template <unsigned, typename, typename...>
+        struct impl;
+
+        template <unsigned Pos, typename Element, typename Head, typename... Tail>
+        struct impl<Pos, Element, Head, Tail...>
+        {
+            static_assert(Pos <= 1 + sizeof...(Tail), "ERROR: 'Pos' is out of range");
+
+            using type = typename InternalConcat::template impl<
+                List<Head>,
+                typename impl<Pos - 1, Element, Tail...>::type
+            >::type;
+        };
+
+        template <typename Element, typename Head, typename... Tail>
+        struct impl<0, Element, Head, Tail...>
+        {
+            using type = List<Element, Head, Tail...>;
+        };
+
+        template <unsigned Pos, typename Element>
+        struct impl<Pos, Element>
+        {
+            static_assert(Pos == 0, "ERROR: 'Pos' is out of range");
+
+            using type = List<Element>;
         };
     };
 

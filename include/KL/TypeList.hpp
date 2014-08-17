@@ -41,6 +41,12 @@ public:
 
     using PopBack = typename InternalPopBack::impl<Pack...>::type;
 
+    template <unsigned First, unsigned Last = First>
+    using Erase = typename InternalErase::impl<First, Last, Pack...>::type;
+
+    template <unsigned Pos, typename Element>
+    using Insert = typename InternalInsert::impl<Pos, Element, Pack...>::type;
+
 };
 
 template <>
@@ -64,6 +70,9 @@ public:
 
     template <typename Element>
     using PushBack = TypeList<Element>;
+
+    template <unsigned Pos, typename Element>
+    using Insert = typename InternalInsert::impl<Pos, Element>::type;
 
 };
 
