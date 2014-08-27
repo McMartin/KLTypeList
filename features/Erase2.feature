@@ -1,4 +1,4 @@
-Erase<Integer> -> TypeList
+Erase<Integer, Integer> -> TypeList
 
 TypeList<>::Erase<0, 0> NOT COMPILE
 
