@@ -73,7 +73,7 @@ class Status(object):
 def get_return_type(result):
     if result is None:
         return 'DNC'
-    if result == 'true' or result == 'false':
+    if result in ('true', 'false'):
         return 'Boolean'
     if result.isdigit():
         return 'Integer'
@@ -136,17 +136,17 @@ class Test{feature_name}
 
 
 def get_result_type(return_type):
-    if return_type == 'Boolean' or return_type == 'Integer':
+    if return_type in ('Boolean', 'Integer'):
         return 'const auto'
-    if return_type == 'Type' or return_type == 'TypeList':
+    if return_type in ('Type', 'TypeList'):
         return 'using'
 
 
 def get_assertion(return_type, result):
     assertion = ''
-    if return_type == 'Boolean' or return_type == 'Integer':
+    if return_type in ('Boolean', 'Integer'):
         assertion = '%s == Result' % result
-    elif return_type == 'TypeList' or return_type == 'Type':
+    elif return_type in ('TypeList', 'Type'):
         assertion = 'std::is_same<%s, Result>::value' % result
     if result is None:
         assertion = 'true'
@@ -178,7 +178,7 @@ class FeatureTest(object):
         arguments = ''
         if feature.has_arguments:
             arguments += '<' + self.arguments + '>'
-        if feature.return_type == 'Boolean' or feature.return_type == 'Integer':
+        if feature.return_type in ('Boolean', 'Integer'):
             arguments += '::value'
 
         test_code = test_code_skeleton.format(
