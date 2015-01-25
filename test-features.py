@@ -92,8 +92,7 @@ class Feature(object):
 
     @staticmethod
     def from_declaration(line):
-        feature_declaration_regex = re.compile(
-            r'^(.+?)(?:<(.*)>)? -> (.+)$')
+        feature_declaration_regex = re.compile(r'^(.+?)(?:<(.*)>)? -> (.+)$')
         match = feature_declaration_regex.search(line)
 
         if not match:
@@ -155,8 +154,7 @@ def get_assertion(return_type, result):
 
 
 class FeatureTest(object):
-    def __init__(
-            self, line, feature_name, pack, arguments, result):
+    def __init__(self, line, feature_name, pack, arguments, result):
         self.line = line
         self.feature_name = feature_name
         self.pack = pack
@@ -174,8 +172,7 @@ class FeatureTest(object):
             return
 
         pack, feature_name, arguments, result = match.groups()
-        return FeatureTest(
-            line, feature_name, pack, arguments, result)
+        return FeatureTest(line, feature_name, pack, arguments, result)
 
     def run(self, feature, compiler):
         arguments = ''
