@@ -50,7 +50,7 @@ class Compiler(object):
         call_env = os.environ.copy()
 
         for key in self.env:
-            if not key in call_env:
+            if key not in call_env:
                 call_env[key] = ''
             for path in self.env[key]:
                 call_env[key] += os.pathsep + path
