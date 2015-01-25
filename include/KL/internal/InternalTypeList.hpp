@@ -18,7 +18,7 @@ public:
 protected:
     struct InternalAt
     {
-        template <unsigned Pos, typename, typename... Tail>
+        template <size_type Pos, typename, typename... Tail>
         struct impl
         {
             static_assert(sizeof...(Tail) + 1 > Pos, "'Pos' is out of range");
@@ -116,7 +116,7 @@ protected:
 
     struct InternalErase
     {
-        template <unsigned First, unsigned Last, typename Head, typename... Tail>
+        template <size_type First, size_type Last, typename Head, typename... Tail>
         struct impl
         {
             static_assert(First <= Last, "'First' is out of range");
@@ -127,7 +127,7 @@ protected:
             >::type;
         };
 
-        template <unsigned Last, typename Head, typename... Tail>
+        template <size_type Last, typename Head, typename... Tail>
         struct impl<0, Last, Head, Tail...>
         {
             static_assert(sizeof...(Tail) + 1 > Last, "'Last' is out of range");
@@ -153,10 +153,10 @@ protected:
 
     struct InternalInsert
     {
-        template <unsigned, typename, typename...>
+        template <size_type, typename, typename...>
         struct impl;
 
-        template <unsigned Pos, typename Element, typename Head, typename... Tail>
+        template <size_type Pos, typename Element, typename Head, typename... Tail>
         struct impl<Pos, Element, Head, Tail...>
         {
             static_assert(Pos <= 1 + sizeof...(Tail), "ERROR: 'Pos' is out of range");
@@ -173,7 +173,7 @@ protected:
             using type = List<Element, Head, Tail...>;
         };
 
-        template <unsigned Pos, typename Element>
+        template <size_type Pos, typename Element>
         struct impl<Pos, Element>
         {
             static_assert(Pos == 0, "ERROR: 'Pos' is out of range");
