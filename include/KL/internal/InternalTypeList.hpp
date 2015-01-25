@@ -12,6 +12,9 @@ template <template <typename...> class List>
 class InternalTypeList
 {
 
+public:
+    using size_type = std::size_t;
+
 protected:
     struct InternalAt
     {
