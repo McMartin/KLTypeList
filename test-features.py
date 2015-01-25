@@ -141,14 +141,12 @@ def get_result_type(return_type):
 
 
 def get_assertion(return_type, result):
-    assertion = ''
-    if return_type in ('Boolean', 'Integer'):
-        assertion = '%s == Result' % result
-    elif return_type in ('TypeList', 'Type'):
-        assertion = 'std::is_same<%s, Result>::value' % result
     if result is None:
-        assertion = 'true'
-    return assertion
+        return 'true'
+    if return_type in ('Boolean', 'Integer'):
+        return '%s == Result' % result
+    if return_type in ('TypeList', 'Type'):
+        return 'std::is_same<%s, Result>::value' % result
 
 
 class FeatureTest(object):
