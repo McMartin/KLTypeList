@@ -50,7 +50,7 @@ class Compiler(object):
         call_env = os.environ.copy()
 
         for key in self.env:
-            if not key in call_env:
+            if key not in call_env:
                 call_env[key] = ''
             for path in self.env[key]:
                 call_env[key] += os.pathsep + path
@@ -73,7 +73,7 @@ class Status(object):
 def get_return_type(result):
     if result is None:
         return 'DNC'
-    if result == 'true' or result == 'false':
+    if result in ('true', 'false'):
         return 'Boolean'
     if result.isdigit():
         return 'Integer'
@@ -92,23 +92,20 @@ class Feature(object):
 
     @staticmethod
     def from_declaration(line):
-        feature_declaration_regex = re.compile(
-            r'^(.+?)(?:<(.*)>)? -> (.+)$')
+        feature_declaration_regex = re.compile(r'^(.+?)(?:<(.*)>)? -> (.+)$')
         match = feature_declaration_regex.search(line)
 
-        if not match:
-            return
-
-        name, has_arguments, return_type = match.groups()
-        return Feature(line, name, has_arguments, return_type)
+        if match:
+            name, has_arguments, return_type = match.groups()
+            return Feature(line, name, has_arguments, return_type)
 
     def run_test(self, feature_test, compiler):
-        if self.name != feature_test.feature_name \
-            or self.has_arguments != (feature_test.arguments is not None) \
+        if (self.name != feature_test.feature_name
+            or self.has_arguments != (feature_test.arguments is not None)
             or (self.return_type != get_return_type(feature_test.result)
-                and feature_test.result is not None):
-                    print '[ %-6s ] %s\n' % ('ERROR', feature_test.line) \
-                          + 'does not match %s' % self.line
+                and feature_test.result is not None)):
+                    print '[ %-6s ] %s\ndoes not match %s' % (
+                        'ERROR', feature_test.line, self.line)
                     return Status.ERROR
 
         return feature_test.run(self, compiler)
@@ -137,26 +134,23 @@ class Test{feature_name}
 
 
 def get_result_type(return_type):
-    if return_type == 'Boolean' or return_type == 'Integer':
+    if return_type in ('Boolean', 'Integer'):
         return 'const auto'
-    if return_type == 'Type' or return_type == 'TypeList':
+    if return_type in ('Type', 'TypeList'):
         return 'using'
 
 
 def get_assertion(return_type, result):
-    assertion = ''
-    if return_type == 'Boolean' or return_type == 'Integer':
-        assertion = '%s == Result' % result
-    elif return_type == 'TypeList' or return_type == 'Type':
-        assertion = 'std::is_same<%s, Result>::value' % result
     if result is None:
-        assertion = 'true'
-    return assertion
+        return 'true'
+    if return_type in ('Boolean', 'Integer'):
+        return '%s == Result' % result
+    if return_type in ('TypeList', 'Type'):
+        return 'std::is_same<%s, Result>::value' % result
 
 
 class FeatureTest(object):
-    def __init__(
-            self, line, feature_name, pack, arguments, result):
+    def __init__(self, line, feature_name, pack, arguments, result):
         self.line = line
         self.feature_name = feature_name
         self.pack = pack
@@ -170,18 +164,15 @@ class FeatureTest(object):
             r' (?:NOT COMPILE|== (.+))$')
         match = feature_test_declaration_regex.search(line)
 
-        if not match:
-            return
-
-        pack, feature_name, arguments, result = match.groups()
-        return FeatureTest(
-            line, feature_name, pack, arguments, result)
+        if match:
+            pack, feature_name, arguments, result = match.groups()
+            return FeatureTest(line, feature_name, pack, arguments, result)
 
     def run(self, feature, compiler):
         arguments = ''
         if feature.has_arguments:
             arguments += '<' + self.arguments + '>'
-        if feature.return_type == 'Boolean' or feature.return_type == 'Integer':
+        if feature.return_type in ('Boolean', 'Integer'):
             arguments += '::value'
 
         test_code = test_code_skeleton.format(
@@ -198,7 +189,7 @@ class FeatureTest(object):
         temp_file_descriptor = None
         temp_file_path = None
         temp_file = None
-        result = None
+        return_code = None
 
         try:
             temp_file_descriptor, temp_file_path = tempfile.mkstemp(
@@ -207,7 +198,7 @@ class FeatureTest(object):
             temp_file.write(test_code)
             temp_file.close()
 
-            result = compiler.compile(temp_file_path)
+            return_code = compiler.compile(temp_file_path)
         finally:
             if temp_file:
                 temp_file.close()
@@ -216,8 +207,8 @@ class FeatureTest(object):
             if temp_file_path:
                 os.remove(temp_file_path)
 
-            if result is not None:
-                if (result == 0) == (self.result is not None):
+            if return_code is not None:
+                if (return_code == 0) == (self.result is not None):
                     print '[ %-6s ] %s' % ('PASS', self.line)
                     return Status.PASSED
                 else:
@@ -241,21 +232,21 @@ def test_feature_file(feature_file_path, compiler):
                     if feature:
                         print '[--------] Feature %s' % feature.name
                     else:
-                        print 'Failed to parse feature "%s" in %s' \
-                            % (line, feature_file_path)
+                        print 'Failed to parse feature "%s" in %s' % (
+                            line, feature_file_path)
                         return [Status.ERROR]
                 else:
                     test = FeatureTest.from_declaration(line)
                     if test:
                         status.append(feature.run_test(test, compiler))
                     else:
-                        print 'Failed to parse feature test "%s" in %s' \
-                            % (line, feature_file_path)
+                        print 'Failed to parse feature test "%s" in %s' % (
+                            line, feature_file_path)
                         status.append(Status.ERROR)
 
-    print '[--------] %s passed' % status.count(Status.PASSED) \
-          + ', %s failed' % status.count(Status.FAILED) \
-          + ', %s errored' % status.count(Status.ERROR)
+    print ('[--------] %s passed' % status.count(Status.PASSED)
+           + ', %s failed' % status.count(Status.FAILED)
+           + ', %s errored' % status.count(Status.ERROR))
 
     return status
 
