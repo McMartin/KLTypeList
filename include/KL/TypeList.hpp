@@ -13,7 +13,7 @@ class TypeList : public InternalTypeList<TypeList>
 {
 
 public:
-    template <typename ValueType = unsigned>
+    template <typename ValueType = size_type>
     using Size = typename InternalSize::impl<ValueType, Pack...>::type;
 
     using Empty = typename InternalEmpty::impl<Pack...>::type;
@@ -21,10 +21,10 @@ public:
     template <typename Element>
     using Contains = typename InternalContains::impl<Element, Pack...>::type;
 
-    template <typename Element, typename ValueType = unsigned>
+    template <typename Element, typename ValueType = size_type>
     using Count = typename InternalCount::impl<ValueType, Element, Pack...>::type;
 
-    template <unsigned Pos>
+    template <size_type Pos>
     using At = typename InternalAt::impl<Pos, Pack...>::type;
 
     using Front = typename InternalFront::impl<Pack...>::type;
@@ -41,10 +41,10 @@ public:
 
     using PopBack = typename InternalPopBack::impl<Pack...>::type;
 
-    template <unsigned First, unsigned Last = First>
+    template <size_type First, size_type Last = First>
     using Erase = typename InternalErase::impl<First, Last, Pack...>::type;
 
-    template <unsigned Pos, typename Element>
+    template <size_type Pos, typename Element>
     using Insert = typename InternalInsert::impl<Pos, Element, Pack...>::type;
 
 };
@@ -54,7 +54,7 @@ class TypeList<> : public InternalTypeList<TypeList>
 {
 
 public:
-    template <typename ValueType = unsigned>
+    template <typename ValueType = size_type>
     using Size = std::integral_constant<ValueType, 0>;
 
     using Empty = std::true_type;
@@ -62,7 +62,7 @@ public:
     template <typename Element>
     using Contains = std::false_type;
 
-    template <typename Element, typename ValueType = unsigned>
+    template <typename Element, typename ValueType = size_type>
     using Count = std::integral_constant<ValueType, 0>;
 
     template <typename Element>
@@ -71,7 +71,7 @@ public:
     template <typename Element>
     using PushBack = TypeList<Element>;
 
-    template <unsigned Pos, typename Element>
+    template <size_type Pos, typename Element>
     using Insert = typename InternalInsert::impl<Pos, Element>::type;
 
 };
