@@ -95,11 +95,9 @@ class Feature(object):
         feature_declaration_regex = re.compile(r'^(.+?)(?:<(.*)>)? -> (.+)$')
         match = feature_declaration_regex.search(line)
 
-        if not match:
-            return
-
-        name, has_arguments, return_type = match.groups()
-        return Feature(line, name, has_arguments, return_type)
+        if match:
+            name, has_arguments, return_type = match.groups()
+            return Feature(line, name, has_arguments, return_type)
 
     def run_test(self, feature_test, compiler):
         if self.name != feature_test.feature_name \
@@ -168,11 +166,9 @@ class FeatureTest(object):
             r' (?:NOT COMPILE|== (.+))$')
         match = feature_test_declaration_regex.search(line)
 
-        if not match:
-            return
-
-        pack, feature_name, arguments, result = match.groups()
-        return FeatureTest(line, feature_name, pack, arguments, result)
+        if match:
+            pack, feature_name, arguments, result = match.groups()
+            return FeatureTest(line, feature_name, pack, arguments, result)
 
     def run(self, feature, compiler):
         arguments = ''
