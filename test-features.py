@@ -191,7 +191,7 @@ class FeatureTest(object):
         temp_file_descriptor = None
         temp_file_path = None
         temp_file = None
-        result = None
+        return_code = None
 
         try:
             temp_file_descriptor, temp_file_path = tempfile.mkstemp(
@@ -200,7 +200,7 @@ class FeatureTest(object):
             temp_file.write(test_code)
             temp_file.close()
 
-            result = compiler.compile(temp_file_path)
+            return_code = compiler.compile(temp_file_path)
         finally:
             if temp_file:
                 temp_file.close()
@@ -209,8 +209,8 @@ class FeatureTest(object):
             if temp_file_path:
                 os.remove(temp_file_path)
 
-            if result is not None:
-                if (result == 0) == (self.result is not None):
+            if return_code is not None:
+                if (return_code == 0) == (self.result is not None):
                     print '[ %-6s ] %s' % ('PASS', self.line)
                     return Status.PASSED
                 else:
