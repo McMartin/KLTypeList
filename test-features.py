@@ -100,12 +100,12 @@ class Feature(object):
             return Feature(line, name, has_arguments, return_type)
 
     def run_test(self, feature_test, compiler):
-        if self.name != feature_test.feature_name \
-            or self.has_arguments != (feature_test.arguments is not None) \
+        if (self.name != feature_test.feature_name
+            or self.has_arguments != (feature_test.arguments is not None)
             or (self.return_type != get_return_type(feature_test.result)
-                and feature_test.result is not None):
-                    print '[ %-6s ] %s\n' % ('ERROR', feature_test.line) \
-                          + 'does not match %s' % self.line
+                and feature_test.result is not None)):
+                    print '[ %-6s ] %s\ndoes not match %s' % (
+                        'ERROR', feature_test.line, self.line)
                     return Status.ERROR
 
         return feature_test.run(self, compiler)
@@ -234,21 +234,21 @@ def test_feature_file(feature_file_path, compiler):
                     if feature:
                         print '[--------] Feature %s' % feature.name
                     else:
-                        print 'Failed to parse feature "%s" in %s' \
-                            % (line, feature_file_path)
+                        print 'Failed to parse feature "%s" in %s' % (
+                            line, feature_file_path)
                         return [Status.ERROR]
                 else:
                     test = FeatureTest.from_declaration(line)
                     if test:
                         status.append(feature.run_test(test, compiler))
                     else:
-                        print 'Failed to parse feature test "%s" in %s' \
-                            % (line, feature_file_path)
+                        print 'Failed to parse feature test "%s" in %s' % (
+                            line, feature_file_path)
                         status.append(Status.ERROR)
 
-    print '[--------] %s passed' % status.count(Status.PASSED) \
-          + ', %s failed' % status.count(Status.FAILED) \
-          + ', %s errored' % status.count(Status.ERROR)
+    print ('[--------] %s passed' % status.count(Status.PASSED)
+           + ', %s failed' % status.count(Status.FAILED)
+           + ', %s errored' % status.count(Status.ERROR))
 
     return status
 
