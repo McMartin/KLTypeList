@@ -61,7 +61,16 @@ class Compiler(object):
         compiler_cmd = [self.exe, source_file_path] + self.options
         call_env = self.call_env()
 
-        return subprocess.call(compiler_cmd, env=call_env)
+        return_code = 0
+        output = ''
+        try:
+            output = subprocess.check_output(
+                compiler_cmd, env=call_env, stderr=subprocess.STDOUT)
+        except subprocess.CalledProcessError as error:
+            return_code = error.returncode
+            output = error.output
+
+        return return_code, output
 
 
 class Status(object):
@@ -198,7 +207,7 @@ class FeatureTest(object):
             temp_file.write(test_code)
             temp_file.close()
 
-            return_code = compiler.compile(temp_file_path)
+            return_code, output = compiler.compile(temp_file_path)
         finally:
             if temp_file:
                 temp_file.close()
@@ -213,6 +222,7 @@ class FeatureTest(object):
                     return Status.PASSED
                 else:
                     print '[ %-6s ] %s' % ('FAIL!', self.line)
+                    print output
                     return Status.FAILED
 
         return Status.ERROR

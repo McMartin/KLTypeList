@@ -1,12 +1,9 @@
 # KLTypeList
 
-
-## Build status
-
-Branch | Status
--------|-------
-[master](https://github.com/McMartin/KLTypeList/tree/master) | [![Build Status](https://travis-ci.org/McMartin/KLTypeList.svg?branch=master)](https://travis-ci.org/McMartin/KLTypeList)
-[dev](https://github.com/McMartin/KLTypeList/tree/dev) | [![Build Status](https://travis-ci.org/McMartin/KLTypeList.svg?branch=dev)](https://travis-ci.org/McMartin/KLTypeList)
+[![Build status](https://ci.appveyor.com/api/projects/status/github/McMartin/KLTypeList?branch=master&svg=true)]
+(https://ci.appveyor.com/project/McMartin/kltypelist/branch/master)
+[![Build Status](https://travis-ci.org/McMartin/KLTypeList.svg?branch=master)]
+(https://travis-ci.org/McMartin/KLTypeList)
 
 
 ## License
