@@ -13,6 +13,8 @@ struct InternalTypeList
 {
     using size_type = std::size_t;
 
+    struct Null {};
+
 protected:
     struct InternalAt
     {
@@ -246,31 +248,62 @@ protected:
     struct InternalResize
     {
         template <size_type Count, typename... Pack>
-        struct impl;
+        struct impl_no_element;
 
         template <size_type Count, typename Head, typename... Tail>
-        struct impl<Count, Head, Tail...>
+        struct impl_no_element<Count, Head, Tail...>
         {
             static_assert(Count <= 1 + sizeof...(Tail), "ERROR: 'Count' is out of range");
 
             using type = typename InternalConcat::template impl<
                 List<Head>,
-                typename impl<Count - 1, Tail...>::type
+                typename impl_no_element<Count - 1, Tail...>::type
             >::type;
         };
 
         template <typename Head, typename... Tail>
-        struct impl<0, Head, Tail...>
+        struct impl_no_element<0, Head, Tail...>
         {
             using type = List<>;
         };
 
         template <size_type Count>
-        struct impl<Count>
+        struct impl_no_element<Count>
         {
             static_assert(Count == 0, "ERROR: 'Count' is out of range");
 
             using type = List<>;
+        };
+
+        template <typename ValueType, ValueType Value, ValueType Min, ValueType Max>
+        struct clamp
+        {
+            static const ValueType value = Value < Min ? Min : Value > Max ? Max : Value;
+        };
+
+        template <size_type Count, typename Element, typename... Pack>
+        struct impl
+        {
+            using type = typename std::conditional<
+                Count <= sizeof...(Pack),
+                typename impl_no_element<
+                    clamp<size_type, Count, 0, sizeof...(Pack)>::value,
+                    Pack...
+                >::type,
+                typename InternalConcat::template impl<
+                    List<Pack...>,
+                    typename InternalRepeat::template impl<
+                        clamp<size_type, Count - sizeof...(Pack), 0, Count>::value,
+                        Element
+                    >::type
+                >::type
+            >::type;
+        };
+
+        template <size_type Count, typename... Pack>
+        struct impl<Count, Null, Pack...>
+        {
+            using type = typename impl_no_element<Count, Pack...>::type;
         };
     };
 
