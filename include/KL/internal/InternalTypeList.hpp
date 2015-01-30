@@ -225,6 +225,24 @@ protected:
         };
     };
 
+    struct InternalRepeat
+    {
+        template <size_type Count, typename Element>
+        struct impl
+        {
+            using type = typename InternalConcat::template impl<
+                List<Element>,
+                typename impl<Count - 1, Element>::type
+            >::type;
+        };
+
+        template <typename Element>
+        struct impl<0, Element>
+        {
+            using type = List<>;
+        };
+    };
+
     struct InternalResize
     {
         template <size_type Count, typename... Pack>
