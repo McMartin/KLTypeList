@@ -9,10 +9,8 @@ namespace KL
 {
 
 template <template <typename...> class List>
-class InternalTypeList
+struct InternalTypeList
 {
-
-public:
     using size_type = std::size_t;
 
 protected:
@@ -235,7 +233,6 @@ protected:
             using type = std::integral_constant<ValueType, sizeof...(Pack)>;
         };
     };
-
 };
 
 } // namespace KL

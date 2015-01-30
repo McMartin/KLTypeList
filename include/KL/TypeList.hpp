@@ -9,10 +9,8 @@ namespace KL
 {
 
 template <typename... Pack>
-class TypeList : public InternalTypeList<TypeList>
+struct TypeList : public InternalTypeList<TypeList>
 {
-
-public:
     template <typename ValueType = size_type>
     using Size = typename InternalSize::impl<ValueType, Pack...>::type;
 
@@ -46,23 +44,20 @@ public:
 
     template <size_type Pos, typename Element>
     using Insert = typename InternalInsert::impl<Pos, Element, Pack...>::type;
-
 };
 
 template <>
-class TypeList<> : public InternalTypeList<TypeList>
+struct TypeList<> : public InternalTypeList<TypeList>
 {
-
-public:
     template <typename ValueType = size_type>
     using Size = std::integral_constant<ValueType, 0>;
 
     using Empty = std::true_type;
 
-    template <typename Element>
+    template <typename>
     using Contains = std::false_type;
 
-    template <typename Element, typename ValueType = size_type>
+    template <typename, typename ValueType = size_type>
     using Count = std::integral_constant<ValueType, 0>;
 
     template <typename Element>
@@ -73,7 +68,6 @@ public:
 
     template <size_type Pos, typename Element>
     using Insert = typename InternalInsert::impl<Pos, Element>::type;
-
 };
 
 } // namespace KL
