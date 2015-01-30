@@ -240,7 +240,7 @@ def test_feature_file(feature_file_path, compiler):
                 if not feature:
                     feature = Feature.from_declaration(line)
                     if feature:
-                        print '[--------] Feature %s' % feature.name
+                        print '[--------] %s' % feature.line
                     else:
                         print 'Failed to parse feature "%s" in %s' % (
                             line, feature_file_path)
