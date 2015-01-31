@@ -225,6 +225,37 @@ protected:
         };
     };
 
+    struct InternalResize
+    {
+        template <size_type Count, typename... Pack>
+        struct impl;
+
+        template <size_type Count, typename Head, typename... Tail>
+        struct impl<Count, Head, Tail...>
+        {
+            static_assert(Count <= 1 + sizeof...(Tail), "ERROR: 'Count' is out of range");
+
+            using type = typename InternalConcat::template impl<
+                List<Head>,
+                typename impl<Count - 1, Tail...>::type
+            >::type;
+        };
+
+        template <typename Head, typename... Tail>
+        struct impl<0, Head, Tail...>
+        {
+            using type = List<>;
+        };
+
+        template <size_type Count>
+        struct impl<Count>
+        {
+            static_assert(Count == 0, "ERROR: 'Count' is out of range");
+
+            using type = List<>;
+        };
+    };
+
     struct InternalSize
     {
         template <typename ValueType, typename... Pack>

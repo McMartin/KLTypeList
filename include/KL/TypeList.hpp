@@ -46,6 +46,9 @@ struct TypeList : public InternalTypeList<TypeList>
     using Insert = typename InternalInsert::impl<Pos, Element, Pack...>::type;
 
     using Clear = TypeList<>;
+
+    template <size_type Count>
+    using Resize = typename InternalResize::impl<Count, Pack...>::type;
 };
 
 template <>
@@ -72,6 +75,9 @@ struct TypeList<> : public InternalTypeList<TypeList>
     using Insert = typename InternalInsert::impl<Pos, Element>::type;
 
     using Clear = TypeList<>;
+
+    template <size_type Count>
+    using Resize = typename InternalResize::impl<Count>::type;
 };
 
 } // namespace KL
