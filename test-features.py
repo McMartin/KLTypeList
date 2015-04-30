@@ -24,11 +24,22 @@ def compiler_arg_choices():
 
 
 def parse_args():
+    def existing_dir_or_file(path):
+        if not os.path.exists(path):
+            message = 'No such file or directory %s' % os.path.abspath(path)
+            raise argparse.ArgumentTypeError(message)
+        return path
+
     arg_parser = argparse.ArgumentParser()
 
     arg_parser.add_argument('-c', '--compiler',
                             required=True,
                             choices=compiler_arg_choices())
+
+    arg_parser.add_argument('input_path',
+                            type=existing_dir_or_file,
+                            nargs='?',
+                            default=os.path.curdir)
 
     return arg_parser.parse_args(sys.argv[1:])
 
@@ -263,6 +274,10 @@ def test_feature_file(feature_file_path, compiler):
 
 
 def find_feature_files(path):
+    if os.path.isfile(path) and os.path.splitext(path)[1] == FEATURE_EXT:
+        yield path
+        return
+
     for root, _, file_names in os.walk(path):
         for file_name in file_names:
             file_path = os.path.join(root, file_name)
@@ -270,14 +285,12 @@ def find_feature_files(path):
                 yield file_path
 
 
-def test_features(compiler):
+def test_features(compiler, input_path):
     compiler_file_path = os.path.join(REPO_ROOT, 'compilers', compiler)
 
     compiler = Compiler.from_file(compiler_file_path)
 
-    features_dir = os.path.join(REPO_ROOT, 'features')
-
-    feature_files = find_feature_files(features_dir)
+    feature_files = find_feature_files(input_path)
 
     status = []
     for feature_file_path in feature_files:
