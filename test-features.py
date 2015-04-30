@@ -12,6 +12,7 @@ import sys
 import tempfile
 
 
+FEATURE_EXT = '.feature'
 REPO_ROOT = os.path.dirname(os.path.abspath(__file__))
 
 
@@ -261,6 +262,14 @@ def test_feature_file(feature_file_path, compiler):
     return status
 
 
+def find_feature_files(path):
+    for root, _, file_names in os.walk(path):
+        for file_name in file_names:
+            file_path = os.path.join(root, file_name)
+            if os.path.splitext(file_path)[1] == FEATURE_EXT:
+                yield file_path
+
+
 def test_features(compiler):
     compiler_file_path = os.path.join(REPO_ROOT, 'compilers', compiler)
 
@@ -268,9 +277,7 @@ def test_features(compiler):
 
     features_dir = os.path.join(REPO_ROOT, 'features')
 
-    feature_files = [os.path.join(features_dir, file_name)
-                     for file_name in os.listdir(features_dir)
-                     if file_name.endswith('.feature')]
+    feature_files = find_feature_files(features_dir)
 
     status = []
     for feature_file_path in feature_files:
