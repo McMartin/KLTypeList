@@ -261,8 +261,8 @@ def test_feature_file(feature_file_path, compiler):
     return status
 
 
-def test_features(args):
-    compiler_file_path = os.path.join(REPO_ROOT, 'compilers', args.compiler)
+def test_features(compiler):
+    compiler_file_path = os.path.join(REPO_ROOT, 'compilers', compiler)
 
     compiler = Compiler.from_file(compiler_file_path)
 
@@ -285,4 +285,4 @@ def test_features(args):
 
 
 if __name__ == '__main__':
-    sys.exit(test_features(parse_args()))
+    sys.exit(test_features(**vars(parse_args())))
