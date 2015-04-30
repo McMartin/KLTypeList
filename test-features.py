@@ -256,7 +256,7 @@ def test_feature_file(feature_file_path, compiler):
 
     print ('[--------] %s passed' % status.count(Status.PASSED)
            + ', %s failed' % status.count(Status.FAILED)
-           + ', %s errored' % status.count(Status.ERROR))
+           + ', %s errored\n' % status.count(Status.ERROR))
 
     return status
 
@@ -275,7 +275,6 @@ def test_features(args):
     status = []
     for feature_file_path in feature_files:
         status += test_feature_file(feature_file_path, compiler)
-        print ''
 
     print '[ TOTAL  ] %s error%s, %s failed test%s, %s passed test%s' % (
         status.count(Status.ERROR), 's'[status.count(Status.ERROR) == 1:],
