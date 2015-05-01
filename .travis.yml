@@ -1,5 +1,9 @@
 language: cpp
 
+branches:
+    only:
+        - master
+
 env:
     matrix:
         - COMPILER=clang++-3.4
