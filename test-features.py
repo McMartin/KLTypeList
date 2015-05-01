@@ -12,6 +12,7 @@ import sys
 import tempfile
 
 
+FEATURE_EXT = '.feature'
 REPO_ROOT = os.path.dirname(os.path.abspath(__file__))
 
 
@@ -23,11 +24,22 @@ def compiler_arg_choices():
 
 
 def parse_args():
+    def existing_dir_or_file(path):
+        if not os.path.exists(path):
+            message = 'No such file or directory %s' % os.path.abspath(path)
+            raise argparse.ArgumentTypeError(message)
+        return path
+
     arg_parser = argparse.ArgumentParser()
 
     arg_parser.add_argument('-c', '--compiler',
                             required=True,
                             choices=compiler_arg_choices())
+
+    arg_parser.add_argument('input_path',
+                            type=existing_dir_or_file,
+                            nargs='?',
+                            default=os.path.curdir)
 
     return arg_parser.parse_args(sys.argv[1:])
 
@@ -256,26 +268,33 @@ def test_feature_file(feature_file_path, compiler):
 
     print ('[--------] %s passed' % status.count(Status.PASSED)
            + ', %s failed' % status.count(Status.FAILED)
-           + ', %s errored' % status.count(Status.ERROR))
+           + ', %s errored\n' % status.count(Status.ERROR))
 
     return status
 
 
-def test_features(args):
-    compiler_file_path = os.path.join(REPO_ROOT, 'compilers', args.compiler)
+def find_feature_files(path):
+    if os.path.isfile(path) and os.path.splitext(path)[1] == FEATURE_EXT:
+        yield path
+        return
+
+    for root, _, file_names in os.walk(path):
+        for file_name in file_names:
+            file_path = os.path.join(root, file_name)
+            if os.path.splitext(file_path)[1] == FEATURE_EXT:
+                yield file_path
+
+
+def test_features(compiler, input_path):
+    compiler_file_path = os.path.join(REPO_ROOT, 'compilers', compiler)
 
     compiler = Compiler.from_file(compiler_file_path)
 
-    features_dir = os.path.join(REPO_ROOT, 'features')
-
-    feature_files = [os.path.join(features_dir, file_name)
-                     for file_name in os.listdir(features_dir)
-                     if file_name.endswith('.feature')]
+    feature_files = find_feature_files(input_path)
 
     status = []
     for feature_file_path in feature_files:
         status += test_feature_file(feature_file_path, compiler)
-        print ''
 
     print '[ TOTAL  ] %s error%s, %s failed test%s, %s passed test%s' % (
         status.count(Status.ERROR), 's'[status.count(Status.ERROR) == 1:],
@@ -286,4 +305,4 @@ def test_features(args):
 
 
 if __name__ == '__main__':
-    sys.exit(test_features(parse_args()))
+    sys.exit(test_features(**vars(parse_args())))
