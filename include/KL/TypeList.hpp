@@ -49,6 +49,8 @@ struct TypeList : public InternalTypeList<TypeList>
 
     template <size_type Count, typename Element = Null>
     using Resize = typename InternalResize::impl<Count, Element, Pack...>::type;
+
+    using Reverse = typename InternalReverse::impl<Pack...>::type;
 };
 
 template <>
@@ -78,6 +80,8 @@ struct TypeList<> : public InternalTypeList<TypeList>
 
     template <size_type Count, typename Element = Null>
     using Resize = typename InternalResize::impl<Count, Element>::type;
+
+    using Reverse = TypeList<>;
 };
 
 } // namespace KL

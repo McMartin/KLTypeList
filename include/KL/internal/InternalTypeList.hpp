@@ -307,6 +307,24 @@ protected:
         };
     };
 
+    struct InternalReverse
+    {
+        template <typename Head, typename... Tail>
+        struct impl
+        {
+            using type = typename InternalConcat::template impl<
+                typename impl<Tail...>::type,
+                List<Head>
+            >::type;
+        };
+
+        template <typename Head>
+        struct impl<Head>
+        {
+            using type = List<Head>;
+        };
+    };
+
     struct InternalSize
     {
         template <typename ValueType, typename... Pack>
