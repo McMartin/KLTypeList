@@ -63,10 +63,7 @@ protected:
     struct InternalContains
     {
         template <typename Element, typename... Pack>
-        struct impl
-        {
-            using type = std::false_type;
-        };
+        struct impl;
 
         template <typename Element, typename Head, typename... Tail>
         struct impl<Element, Head, Tail...>
@@ -79,15 +76,18 @@ protected:
         {
             using type = std::true_type;
         };
+
+        template <typename Element>
+        struct impl<Element>
+        {
+            using type = std::false_type;
+        };
     };
 
     struct InternalCount
     {
         template <typename ValueType, typename Element, typename... Pack>
-        struct impl
-        {
-            using type = std::integral_constant<ValueType, 0>;
-        };
+        struct impl;
 
         template <typename ValueType, typename Element, typename Head, typename... Tail>
         struct impl<ValueType, Element, Head, Tail...>
@@ -102,6 +102,12 @@ protected:
                 ValueType,
                 1 + impl<ValueType, Element, Tail...>::type::value
             >;
+        };
+
+        template <typename ValueType, typename Element>
+        struct impl<ValueType, Element>
+        {
+            using type = std::integral_constant<ValueType, 0>;
         };
     };
 
