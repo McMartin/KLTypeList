@@ -125,8 +125,8 @@ class Feature(object):
             or self.has_arguments != (feature_test.arguments is not None)
             or (self.return_type != get_return_type(feature_test.result)
                 and feature_test.result is not None)):
-                    print '[ %-6s ] %s\ndoes not match %s' % (
-                        'ERROR', feature_test.line, self.line)
+                    print '[ %-6s ] %s' % ('ERROR', feature_test.line)
+                    print 'does not match %s' % self.line
                     return Status.ERROR
 
         return feature_test.run(self, compiler)
@@ -269,7 +269,8 @@ def test_feature_file(feature_file_path, compiler):
 
     print ('[--------] %s passed' % status_counts[Status.PASSED]
            + ', %s failed' % status_counts[Status.FAILED]
-           + ', %s errored\n' % status_counts[Status.ERROR])
+           + ', %s errored' % status_counts[Status.ERROR])
+    print ''
 
     return status_counts
 
