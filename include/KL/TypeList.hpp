@@ -39,7 +39,7 @@ struct TypeList : public InternalTypeList<TypeList>
 
     using PopBack = typename InternalPopBack::impl<Pack...>::type;
 
-    template <size_type First, size_type Last = First>
+    template <size_type First, size_type Last = First + 1>
     using Erase = typename InternalErase::impl<First, Last, Pack...>::type;
 
     template <size_type Pos, typename Element>
@@ -72,6 +72,9 @@ struct TypeList<> : public InternalTypeList<TypeList>
 
     template <typename Element>
     using PushBack = TypeList<Element>;
+
+    template <size_type First, size_type Last = First + 1>
+    using Erase = typename InternalErase::impl<First, Last>::type;
 
     template <size_type Pos, typename Element>
     using Insert = typename InternalInsert::impl<Pos, Element>::type;

@@ -122,8 +122,11 @@ protected:
 
     struct InternalErase
     {
+        template <size_type First, size_type Last, typename... Pack>
+        struct impl;
+
         template <size_type First, size_type Last, typename Head, typename... Tail>
-        struct impl
+        struct impl<First, Last, Head, Tail...>
         {
             static_assert(First <= Last, "ERROR: 'First' is out of range");
 
@@ -136,7 +139,7 @@ protected:
         template <size_type Last, typename Head, typename... Tail>
         struct impl<0, Last, Head, Tail...>
         {
-            static_assert(Last < sizeof...(Tail) + 1, "ERROR: 'Last' is out of range");
+            static_assert(Last <= sizeof...(Tail) + 1, "ERROR: 'Last' is out of range");
 
             using type = typename impl<0, Last - 1, Tail...>::type;
         };
@@ -144,7 +147,13 @@ protected:
         template <typename Head, typename... Tail>
         struct impl<0, 0, Head, Tail...>
         {
-            using type = List<Tail...>;
+            using type = List<Head, Tail...>;
+        };
+
+        template <typename... Pack>
+        struct impl<0, 0, Pack...>
+        {
+            using type = List<Pack...>;
         };
     };
 
