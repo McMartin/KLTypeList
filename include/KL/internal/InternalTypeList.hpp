@@ -21,7 +21,7 @@ protected:
         template <size_type Pos, typename, typename... Tail>
         struct impl
         {
-            static_assert(sizeof...(Tail) + 1 > Pos, "ERROR: 'Pos' is out of range");
+            static_assert(Pos < sizeof...(Tail) + 1, "ERROR: 'Pos' is out of range");
 
             using type = typename impl<Pos - 1, Tail...>::type;
         };
@@ -130,7 +130,7 @@ protected:
         template <size_type Last, typename Head, typename... Tail>
         struct impl<0, Last, Head, Tail...>
         {
-            static_assert(sizeof...(Tail) + 1 > Last, "ERROR: 'Last' is out of range");
+            static_assert(Last < sizeof...(Tail) + 1, "ERROR: 'Last' is out of range");
 
             using type = typename impl<0, Last - 1, Tail...>::type;
         };
