@@ -1,9 +1,12 @@
 clone_depth: 50
 
+branches:
+    only:
+        - master
+
 environment:
     matrix:
         - COMPILER: msvc_2013
-        - COMPILER: msvc_2013_nov_ctp
 
 build: off
 
