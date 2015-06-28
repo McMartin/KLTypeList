@@ -3,7 +3,6 @@ clone_depth: 50
 environment:
     matrix:
         - COMPILER: msvc_2013
-        - COMPILER: msvc_2013_nov_ctp
 
 build: off
 
