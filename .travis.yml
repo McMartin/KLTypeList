@@ -18,4 +18,4 @@ install:
     - sudo apt-get install python
 
 script:
-    - python test-features.py --compiler compilers/$COMPILER
+    - python test-features.py --compiler compilers/$COMPILER.py

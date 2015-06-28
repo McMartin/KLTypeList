@@ -11,4 +11,4 @@ environment:
 build: off
 
 test_script:
-    - python test-features.py --compiler compilers/%COMPILER%
+    - python test-features.py --compiler compilers/%COMPILER%.py
