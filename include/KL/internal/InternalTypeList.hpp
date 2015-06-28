@@ -18,10 +18,10 @@ struct InternalTypeList
 protected:
     struct InternalAt
     {
-        template <size_type Pos, typename, typename... Tail>
+        template <size_type Pos, typename Head, typename... Tail>
         struct impl
         {
-            static_assert(sizeof...(Tail) + 1 > Pos, "'Pos' is out of range");
+            static_assert(Pos < sizeof...(Tail) + 1, "ERROR: 'Pos' is out of range");
 
             using type = typename impl<Pos - 1, Tail...>::type;
         };
@@ -35,7 +35,7 @@ protected:
 
     struct InternalBack
     {
-        template <typename, typename... Tail>
+        template <typename Head, typename... Tail>
         struct impl
         {
             using type = typename impl<Tail...>::type;
@@ -50,7 +50,7 @@ protected:
 
     struct InternalConcat
     {
-        template <typename, typename>
+        template <typename LeftList, typename RightList>
         struct impl;
 
         template <typename... LeftPack, typename... RightPack>
@@ -62,11 +62,8 @@ protected:
 
     struct InternalContains
     {
-        template <typename, typename...>
-        struct impl
-        {
-            using type = std::false_type;
-        };
+        template <typename Element, typename... Pack>
+        struct impl;
 
         template <typename Element, typename Head, typename... Tail>
         struct impl<Element, Head, Tail...>
@@ -79,15 +76,18 @@ protected:
         {
             using type = std::true_type;
         };
+
+        template <typename Element>
+        struct impl<Element>
+        {
+            using type = std::false_type;
+        };
     };
 
     struct InternalCount
     {
-        template <typename ValueType, typename, typename...>
-        struct impl
-        {
-            using type = std::integral_constant<ValueType, 0>;
-        };
+        template <typename ValueType, typename Element, typename... Pack>
+        struct impl;
 
         template <typename ValueType, typename Element, typename Head, typename... Tail>
         struct impl<ValueType, Element, Head, Tail...>
@@ -102,6 +102,12 @@ protected:
                 ValueType,
                 1 + impl<ValueType, Element, Tail...>::type::value
             >;
+        };
+
+        template <typename ValueType, typename Element>
+        struct impl<ValueType, Element>
+        {
+            using type = std::integral_constant<ValueType, 0>;
         };
     };
 
@@ -119,7 +125,7 @@ protected:
         template <size_type First, size_type Last, typename Head, typename... Tail>
         struct impl
         {
-            static_assert(First <= Last, "'First' is out of range");
+            static_assert(First <= Last, "ERROR: 'First' is out of range");
 
             using type = typename InternalConcat::template impl<
                 List<Head>,
@@ -130,7 +136,7 @@ protected:
         template <size_type Last, typename Head, typename... Tail>
         struct impl<0, Last, Head, Tail...>
         {
-            static_assert(sizeof...(Tail) + 1 > Last, "'Last' is out of range");
+            static_assert(Last < sizeof...(Tail) + 1, "ERROR: 'Last' is out of range");
 
             using type = typename impl<0, Last - 1, Tail...>::type;
         };
@@ -144,7 +150,7 @@ protected:
 
     struct InternalFront
     {
-        template <typename Head, typename...>
+        template <typename Head, typename... Pack>
         struct impl
         {
             using type = Head;
@@ -153,7 +159,7 @@ protected:
 
     struct InternalInsert
     {
-        template <size_type, typename, typename...>
+        template <size_type Pos, typename Element, typename... Pack>
         struct impl;
 
         template <size_type Pos, typename Element, typename Head, typename... Tail>
