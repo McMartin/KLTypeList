@@ -21,7 +21,7 @@ protected:
         template <size_type Pos, typename, typename... Tail>
         struct impl
         {
-            static_assert(sizeof...(Tail) + 1 > Pos, "'Pos' is out of range");
+            static_assert(sizeof...(Tail) + 1 > Pos, "ERROR: 'Pos' is out of range");
 
             using type = typename impl<Pos - 1, Tail...>::type;
         };
@@ -119,7 +119,7 @@ protected:
         template <size_type First, size_type Last, typename Head, typename... Tail>
         struct impl
         {
-            static_assert(First <= Last, "'First' is out of range");
+            static_assert(First <= Last, "ERROR: 'First' is out of range");
 
             using type = typename InternalConcat::template impl<
                 List<Head>,
@@ -130,7 +130,7 @@ protected:
         template <size_type Last, typename Head, typename... Tail>
         struct impl<0, Last, Head, Tail...>
         {
-            static_assert(sizeof...(Tail) + 1 > Last, "'Last' is out of range");
+            static_assert(sizeof...(Tail) + 1 > Last, "ERROR: 'Last' is out of range");
 
             using type = typename impl<0, Last - 1, Tail...>::type;
         };
