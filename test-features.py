@@ -13,14 +13,6 @@ import tempfile
 
 
 FEATURE_EXT = '.feature'
-REPO_ROOT = os.path.dirname(os.path.abspath(__file__))
-
-
-def compiler_arg_choices():
-    compilers_dir = os.path.join(REPO_ROOT, 'compilers')
-
-    return [os.path.basename(file_name)
-            for file_name in os.listdir(compilers_dir)]
 
 
 def parse_args():
@@ -30,11 +22,18 @@ def parse_args():
             raise argparse.ArgumentTypeError(message)
         return path
 
+    def existing_file(path):
+        if not os.path.isfile(path):
+            message = 'No such file %s' % os.path.abspath(path)
+            raise argparse.ArgumentTypeError(message)
+        return path
+
     arg_parser = argparse.ArgumentParser()
 
     arg_parser.add_argument('-c', '--compiler',
                             required=True,
-                            choices=compiler_arg_choices())
+                            type=existing_file,
+                            dest='compiler_file_path')
 
     arg_parser.add_argument('input_path',
                             type=existing_dir_or_file,
@@ -285,9 +284,7 @@ def find_feature_files(path):
                 yield file_path
 
 
-def test_features(compiler, input_path):
-    compiler_file_path = os.path.join(REPO_ROOT, 'compilers', compiler)
-
+def test_features(compiler_file_path, input_path):
     compiler = Compiler.from_file(compiler_file_path)
 
     feature_files = find_feature_files(input_path)
