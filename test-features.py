@@ -5,6 +5,7 @@
 
 import argparse
 import ast
+import collections
 import os
 import re
 import subprocess
@@ -13,20 +14,19 @@ import tempfile
 
 
 FEATURE_EXT = '.feature'
-REPO_ROOT = os.path.dirname(os.path.abspath(__file__))
-
-
-def compiler_arg_choices():
-    compilers_dir = os.path.join(REPO_ROOT, 'compilers')
-
-    return [os.path.basename(file_name)
-            for file_name in os.listdir(compilers_dir)]
 
 
 def parse_args():
     def existing_dir_or_file(path):
         if not os.path.exists(path):
-            message = 'No such file or directory %s' % os.path.abspath(path)
+            message = 'No such file or directory {}'.format(
+                os.path.abspath(path))
+            raise argparse.ArgumentTypeError(message)
+        return path
+
+    def existing_file(path):
+        if not os.path.isfile(path):
+            message = 'No such file {}'.format(os.path.abspath(path))
             raise argparse.ArgumentTypeError(message)
         return path
 
@@ -34,7 +34,8 @@ def parse_args():
 
     arg_parser.add_argument('-c', '--compiler',
                             required=True,
-                            choices=compiler_arg_choices())
+                            type=existing_file,
+                            dest='compiler_file_path')
 
     arg_parser.add_argument('input_path',
                             type=existing_dir_or_file,
@@ -87,8 +88,8 @@ class Compiler(object):
 
 class Status(object):
     ERROR = 'ERROR'
-    PASSED = 'PASSED'
     FAILED = 'FAILED'
+    PASSED = 'PASSED'
 
 
 def get_return_type(result):
@@ -116,7 +117,7 @@ class Feature(object):
         feature_declaration_regex = re.compile(r'^(.+?)(?:<(.*)>)? -> (.+)$')
         match = feature_declaration_regex.search(line)
 
-        if match:
+        if match is not None:
             name, has_arguments, return_type = match.groups()
             return Feature(line, name, has_arguments, return_type)
 
@@ -125,8 +126,8 @@ class Feature(object):
             or self.has_arguments != (feature_test.arguments is not None)
             or (self.return_type != get_return_type(feature_test.result)
                 and feature_test.result is not None)):
-                    print '[ %-6s ] %s\ndoes not match %s' % (
-                        'ERROR', feature_test.line, self.line)
+                    print '[ {:<6} ] {}'.format('ERROR', feature_test.line)
+                    print 'does not match {}'.format(self.line)
                     return Status.ERROR
 
         return feature_test.run(self, compiler)
@@ -165,9 +166,9 @@ def get_assertion(return_type, result):
     if result is None:
         return 'true'
     if return_type in ('Boolean', 'Integer'):
-        return '%s == Result' % result
+        return '{} == Result'.format(result)
     if return_type in ('TypeList', 'Type'):
-        return 'std::is_same<%s, Result>::value' % result
+        return 'std::is_same<{}, Result>::value'.format(result)
 
 
 class FeatureTest(object):
@@ -185,7 +186,7 @@ class FeatureTest(object):
             r' (?:NOT COMPILE|== (.+))$')
         match = feature_test_declaration_regex.search(line)
 
-        if match:
+        if match is not None:
             pack, feature_name, arguments, result = match.groups()
             return FeatureTest(line, feature_name, pack, arguments, result)
 
@@ -221,19 +222,19 @@ class FeatureTest(object):
 
             return_code, output = compiler.compile(temp_file_path)
         finally:
-            if temp_file:
+            if temp_file is not None:
                 temp_file.close()
-            elif temp_file_descriptor:
+            elif temp_file_descriptor is not None:
                 os.close(temp_file_descriptor)
-            if temp_file_path:
+            if temp_file_path is not None:
                 os.remove(temp_file_path)
 
             if return_code is not None:
                 if (return_code == 0) == (self.result is not None):
-                    print '[ %-6s ] %s' % ('PASS', self.line)
+                    print '[ {:<6} ] {}'.format('PASS', self.line)
                     return Status.PASSED
                 else:
-                    print '[ %-6s ] %s' % ('FAIL!', self.line)
+                    print '[ {:<6} ] {}'.format('FAIL!', self.line)
                     print output
                     return Status.FAILED
 
@@ -242,35 +243,38 @@ class FeatureTest(object):
 
 def test_feature_file(feature_file_path, compiler):
     feature = None
-    status = []
+    status_counts = collections.Counter()
 
     with open(feature_file_path, 'r') as feature_file:
         for line in feature_file:
             if not line.isspace():
                 line = line.rstrip()
 
-                if not feature:
+                if feature is None:
                     feature = Feature.from_declaration(line)
-                    if feature:
-                        print '[--------] %s' % feature.line
+                    if feature is not None:
+                        print '[--------] {}'.format(feature.line)
                     else:
-                        print 'Failed to parse feature "%s" in %s' % (
+                        print 'Failed to parse feature "{}" in {}'.format(
                             line, feature_file_path)
-                        return [Status.ERROR]
+                        status_counts[Status.ERROR] = 1
+                        return status_counts
                 else:
                     test = FeatureTest.from_declaration(line)
-                    if test:
-                        status.append(feature.run_test(test, compiler))
+                    if test is not None:
+                        status_counts[feature.run_test(test, compiler)] += 1
                     else:
-                        print 'Failed to parse feature test "%s" in %s' % (
+                        print 'Failed to parse feature test "{}" in {}'.format(
                             line, feature_file_path)
-                        status.append(Status.ERROR)
+                        status_counts[Status.ERROR] += 1
 
-    print ('[--------] %s passed' % status.count(Status.PASSED)
-           + ', %s failed' % status.count(Status.FAILED)
-           + ', %s errored\n' % status.count(Status.ERROR))
+    print '[--------] {} passed, {} failed, {} errored'.format(
+        status_counts[Status.PASSED],
+        status_counts[Status.FAILED],
+        status_counts[Status.ERROR])
+    print ''
 
-    return status
+    return status_counts
 
 
 def find_feature_files(path):
@@ -285,23 +289,22 @@ def find_feature_files(path):
                 yield file_path
 
 
-def test_features(compiler, input_path):
-    compiler_file_path = os.path.join(REPO_ROOT, 'compilers', compiler)
-
+def test_features(compiler_file_path, input_path):
     compiler = Compiler.from_file(compiler_file_path)
 
     feature_files = find_feature_files(input_path)
 
-    status = []
+    status_counts = collections.Counter()
+
     for feature_file_path in feature_files:
-        status += test_feature_file(feature_file_path, compiler)
+        status_counts += test_feature_file(feature_file_path, compiler)
 
-    print '[ TOTAL  ] %s error%s, %s failed test%s, %s passed test%s' % (
-        status.count(Status.ERROR), 's'[status.count(Status.ERROR) == 1:],
-        status.count(Status.FAILED), 's'[status.count(Status.FAILED) == 1:],
-        status.count(Status.PASSED), 's'[status.count(Status.PASSED) == 1:])
+    print '[ TOTAL  ] {} error{}, {} failed test{}, {} passed test{}'.format(
+        status_counts[Status.ERROR], 's'[status_counts[Status.ERROR] == 1:],
+        status_counts[Status.FAILED], 's'[status_counts[Status.FAILED] == 1:],
+        status_counts[Status.PASSED], 's'[status_counts[Status.PASSED] == 1:])
 
-    return 1 if Status.ERROR in status else status.count(Status.FAILED)
+    return 1 if Status.ERROR in status_counts else status_counts[Status.FAILED]
 
 
 if __name__ == '__main__':
