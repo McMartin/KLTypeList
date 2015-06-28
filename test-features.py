@@ -117,7 +117,7 @@ class Feature(object):
         feature_declaration_regex = re.compile(r'^(.+?)(?:<(.*)>)? -> (.+)$')
         match = feature_declaration_regex.search(line)
 
-        if match:
+        if match is not None:
             name, has_arguments, return_type = match.groups()
             return Feature(line, name, has_arguments, return_type)
 
@@ -186,7 +186,7 @@ class FeatureTest(object):
             r' (?:NOT COMPILE|== (.+))$')
         match = feature_test_declaration_regex.search(line)
 
-        if match:
+        if match is not None:
             pack, feature_name, arguments, result = match.groups()
             return FeatureTest(line, feature_name, pack, arguments, result)
 
@@ -222,11 +222,11 @@ class FeatureTest(object):
 
             return_code, output = compiler.compile(temp_file_path)
         finally:
-            if temp_file:
+            if temp_file is not None:
                 temp_file.close()
-            elif temp_file_descriptor:
+            elif temp_file_descriptor is not None:
                 os.close(temp_file_descriptor)
-            if temp_file_path:
+            if temp_file_path is not None:
                 os.remove(temp_file_path)
 
             if return_code is not None:
@@ -250,9 +250,9 @@ def test_feature_file(feature_file_path, compiler):
             if not line.isspace():
                 line = line.rstrip()
 
-                if not feature:
+                if feature is None:
                     feature = Feature.from_declaration(line)
-                    if feature:
+                    if feature is not None:
                         print '[--------] {}'.format(feature.line)
                     else:
                         print 'Failed to parse feature "{}" in {}'.format(
@@ -261,7 +261,7 @@ def test_feature_file(feature_file_path, compiler):
                         return status_counts
                 else:
                     test = FeatureTest.from_declaration(line)
-                    if test:
+                    if test is not None:
                         status_counts[feature.run_test(test, compiler)] += 1
                     else:
                         print 'Failed to parse feature test "{}" in {}'.format(
