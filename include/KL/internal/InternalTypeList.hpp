@@ -18,7 +18,7 @@ struct InternalTypeList
 protected:
     struct InternalAt
     {
-        template <size_type Pos, typename, typename... Tail>
+        template <size_type Pos, typename Head, typename... Tail>
         struct impl
         {
             static_assert(Pos < sizeof...(Tail) + 1, "ERROR: 'Pos' is out of range");
@@ -35,7 +35,7 @@ protected:
 
     struct InternalBack
     {
-        template <typename, typename... Tail>
+        template <typename Head, typename... Tail>
         struct impl
         {
             using type = typename impl<Tail...>::type;
@@ -50,7 +50,7 @@ protected:
 
     struct InternalConcat
     {
-        template <typename, typename>
+        template <typename LeftList, typename RightList>
         struct impl;
 
         template <typename... LeftPack, typename... RightPack>
@@ -62,7 +62,7 @@ protected:
 
     struct InternalContains
     {
-        template <typename, typename...>
+        template <typename Element, typename... Pack>
         struct impl
         {
             using type = std::false_type;
@@ -83,7 +83,7 @@ protected:
 
     struct InternalCount
     {
-        template <typename ValueType, typename, typename...>
+        template <typename ValueType, typename Element, typename... Pack>
         struct impl
         {
             using type = std::integral_constant<ValueType, 0>;
@@ -144,7 +144,7 @@ protected:
 
     struct InternalFront
     {
-        template <typename Head, typename...>
+        template <typename Head, typename... Pack>
         struct impl
         {
             using type = Head;
@@ -153,7 +153,7 @@ protected:
 
     struct InternalInsert
     {
-        template <size_type, typename, typename...>
+        template <size_type Pos, typename Element, typename... Pack>
         struct impl;
 
         template <size_type Pos, typename Element, typename Head, typename... Tail>

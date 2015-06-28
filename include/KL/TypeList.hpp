@@ -61,10 +61,10 @@ struct TypeList<> : public InternalTypeList<TypeList>
 
     using Empty = std::true_type;
 
-    template <typename>
+    template <typename Element>
     using Contains = std::false_type;
 
-    template <typename, typename ValueType = size_type>
+    template <typename Element, typename ValueType = size_type>
     using Count = std::integral_constant<ValueType, 0>;
 
     template <typename Element>
