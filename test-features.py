@@ -86,8 +86,8 @@ class Compiler(object):
 
 class Status(object):
     ERROR = 'ERROR'
-    PASSED = 'PASSED'
     FAILED = 'FAILED'
+    PASSED = 'PASSED'
 
 
 def get_return_type(result):
