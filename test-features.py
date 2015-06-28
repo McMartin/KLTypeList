@@ -19,13 +19,14 @@ FEATURE_EXT = '.feature'
 def parse_args():
     def existing_dir_or_file(path):
         if not os.path.exists(path):
-            message = 'No such file or directory %s' % os.path.abspath(path)
+            message = 'No such file or directory {}'.format(
+                os.path.abspath(path))
             raise argparse.ArgumentTypeError(message)
         return path
 
     def existing_file(path):
         if not os.path.isfile(path):
-            message = 'No such file %s' % os.path.abspath(path)
+            message = 'No such file {}'.format(os.path.abspath(path))
             raise argparse.ArgumentTypeError(message)
         return path
 
@@ -125,8 +126,8 @@ class Feature(object):
             or self.has_arguments != (feature_test.arguments is not None)
             or (self.return_type != get_return_type(feature_test.result)
                 and feature_test.result is not None)):
-                    print '[ %-6s ] %s' % ('ERROR', feature_test.line)
-                    print 'does not match %s' % self.line
+                    print '[ {:<6} ] {}'.format('ERROR', feature_test.line)
+                    print 'does not match {}'.format(self.line)
                     return Status.ERROR
 
         return feature_test.run(self, compiler)
@@ -165,9 +166,9 @@ def get_assertion(return_type, result):
     if result is None:
         return 'true'
     if return_type in ('Boolean', 'Integer'):
-        return '%s == Result' % result
+        return '{} == Result'.format(result)
     if return_type in ('TypeList', 'Type'):
-        return 'std::is_same<%s, Result>::value' % result
+        return 'std::is_same<{}, Result>::value'.format(result)
 
 
 class FeatureTest(object):
@@ -230,10 +231,10 @@ class FeatureTest(object):
 
             if return_code is not None:
                 if (return_code == 0) == (self.result is not None):
-                    print '[ %-6s ] %s' % ('PASS', self.line)
+                    print '[ {:<6} ] {}'.format('PASS', self.line)
                     return Status.PASSED
                 else:
-                    print '[ %-6s ] %s' % ('FAIL!', self.line)
+                    print '[ {:<6} ] {}'.format('FAIL!', self.line)
                     print output
                     return Status.FAILED
 
@@ -252,9 +253,9 @@ def test_feature_file(feature_file_path, compiler):
                 if not feature:
                     feature = Feature.from_declaration(line)
                     if feature:
-                        print '[--------] %s' % feature.line
+                        print '[--------] {}'.format(feature.line)
                     else:
-                        print 'Failed to parse feature "%s" in %s' % (
+                        print 'Failed to parse feature "{}" in {}'.format(
                             line, feature_file_path)
                         status_counts[Status.ERROR] = 1
                         return status_counts
@@ -263,13 +264,14 @@ def test_feature_file(feature_file_path, compiler):
                     if test:
                         status_counts[feature.run_test(test, compiler)] += 1
                     else:
-                        print 'Failed to parse feature test "%s" in %s' % (
+                        print 'Failed to parse feature test "{}" in {}'.format(
                             line, feature_file_path)
                         status_counts[Status.ERROR] += 1
 
-    print ('[--------] %s passed' % status_counts[Status.PASSED]
-           + ', %s failed' % status_counts[Status.FAILED]
-           + ', %s errored' % status_counts[Status.ERROR])
+    print '[--------] {} passed, {} failed, {} errored'.format(
+        status_counts[Status.PASSED],
+        status_counts[Status.FAILED],
+        status_counts[Status.ERROR])
     print ''
 
     return status_counts
@@ -297,7 +299,7 @@ def test_features(compiler_file_path, input_path):
     for feature_file_path in feature_files:
         status_counts += test_feature_file(feature_file_path, compiler)
 
-    print '[ TOTAL  ] %s error%s, %s failed test%s, %s passed test%s' % (
+    print '[ TOTAL  ] {} error{}, {} failed test{}, {} passed test{}'.format(
         status_counts[Status.ERROR], 's'[status_counts[Status.ERROR] == 1:],
         status_counts[Status.FAILED], 's'[status_counts[Status.FAILED] == 1:],
         status_counts[Status.PASSED], 's'[status_counts[Status.PASSED] == 1:])
