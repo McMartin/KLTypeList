@@ -5,6 +5,7 @@
 
 import argparse
 import ast
+import collections
 import os
 import re
 import subprocess
@@ -241,7 +242,7 @@ class FeatureTest(object):
 
 def test_feature_file(feature_file_path, compiler):
     feature = None
-    status = []
+    status_counts = collections.Counter()
 
     with open(feature_file_path, 'r') as feature_file:
         for line in feature_file:
@@ -255,21 +256,22 @@ def test_feature_file(feature_file_path, compiler):
                     else:
                         print 'Failed to parse feature "%s" in %s' % (
                             line, feature_file_path)
-                        return [Status.ERROR]
+                        status_counts[Status.ERROR] = 1
+                        return status_counts
                 else:
                     test = FeatureTest.from_declaration(line)
                     if test:
-                        status.append(feature.run_test(test, compiler))
+                        status_counts[feature.run_test(test, compiler)] += 1
                     else:
                         print 'Failed to parse feature test "%s" in %s' % (
                             line, feature_file_path)
-                        status.append(Status.ERROR)
+                        status_counts[Status.ERROR] += 1
 
-    print ('[--------] %s passed' % status.count(Status.PASSED)
-           + ', %s failed' % status.count(Status.FAILED)
-           + ', %s errored\n' % status.count(Status.ERROR))
+    print ('[--------] %s passed' % status_counts[Status.PASSED]
+           + ', %s failed' % status_counts[Status.FAILED]
+           + ', %s errored\n' % status_counts[Status.ERROR])
 
-    return status
+    return status_counts
 
 
 def find_feature_files(path):
@@ -289,16 +291,17 @@ def test_features(compiler_file_path, input_path):
 
     feature_files = find_feature_files(input_path)
 
-    status = []
+    status_counts = collections.Counter()
+
     for feature_file_path in feature_files:
-        status += test_feature_file(feature_file_path, compiler)
+        status_counts += test_feature_file(feature_file_path, compiler)
 
     print '[ TOTAL  ] %s error%s, %s failed test%s, %s passed test%s' % (
-        status.count(Status.ERROR), 's'[status.count(Status.ERROR) == 1:],
-        status.count(Status.FAILED), 's'[status.count(Status.FAILED) == 1:],
-        status.count(Status.PASSED), 's'[status.count(Status.PASSED) == 1:])
+        status_counts[Status.ERROR], 's'[status_counts[Status.ERROR] == 1:],
+        status_counts[Status.FAILED], 's'[status_counts[Status.FAILED] == 1:],
+        status_counts[Status.PASSED], 's'[status_counts[Status.PASSED] == 1:])
 
-    return 1 if Status.ERROR in status else status.count(Status.FAILED)
+    return 1 if Status.ERROR in status_counts else status_counts[Status.FAILED]
 
 
 if __name__ == '__main__':
