@@ -4,6 +4,7 @@
 
 #include "internal/InternalTypeList.hpp"
 
+
 namespace KL
 {
 
@@ -51,6 +52,7 @@ struct TypeList : public InternalTypeList<TypeList>
 
     using Reverse = typename InternalReverse::impl<Pack...>::type;
 };
+
 
 template <>
 struct TypeList<> : public InternalTypeList<TypeList>
