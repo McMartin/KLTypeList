@@ -1,3 +1,5 @@
+# Copyright (c) 2014-2016 Alain Martin
+
 PopBack -> TypeList
 
 TypeList<>::PopBack NOT COMPILE

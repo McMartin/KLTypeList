@@ -1,3 +1,5 @@
+# Copyright (c) 2015-2016 Alain Martin
+
 Resize<Integer, Type> -> TypeList
 
 TypeList<>::Resize<0, A> == TypeList<>

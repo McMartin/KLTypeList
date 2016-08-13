@@ -1,3 +1,5 @@
+# Copyright (c) 2014-2016 Alain Martin
+
 Count<Type, ValueType> -> Integer
 
 TypeList<>::Count<A> == 0

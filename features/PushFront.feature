@@ -1,3 +1,5 @@
+# Copyright (c) 2014-2016 Alain Martin
+
 PushFront<Type> -> TypeList
 
 TypeList<>::PushFront<A> == TypeList<A>

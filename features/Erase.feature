@@ -1,3 +1,5 @@
+# Copyright (c) 2014-2016 Alain Martin
+
 Erase<Integer> -> TypeList
 
 TypeList<>::Erase<0> NOT COMPILE

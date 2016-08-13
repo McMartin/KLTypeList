@@ -1,3 +1,5 @@
+# Copyright (c) 2014-2016 Alain Martin
+
 Size<ValueType> -> Integer
 
 TypeList<>::Size<> == 0
