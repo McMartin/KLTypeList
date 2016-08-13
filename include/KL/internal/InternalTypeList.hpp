@@ -1,7 +1,6 @@
 // Copyright (c) 2014-2016 Alain Martin
 
-#ifndef KL_INTERNAL_TYPE_LIST
-#define KL_INTERNAL_TYPE_LIST
+#pragma once
 
 #include <type_traits>
 
@@ -351,5 +350,3 @@ protected:
 };
 
 } // namespace KL
-
-#endif // KL_INTERNAL_TYPE_LIST
