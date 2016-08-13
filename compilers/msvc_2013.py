@@ -1,4 +1,4 @@
-# Copyright (c) 2014 Alain Martin
+# Copyright (c) 2014-2016 Alain Martin
 
 {
     'exe': 'C:/Program Files (x86)/Microsoft Visual Studio 12.0/VC/bin/cl.exe',

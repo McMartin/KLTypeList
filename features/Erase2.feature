@@ -1,3 +1,5 @@
+# Copyright (c) 2014-2016 Alain Martin
+
 Erase<Integer, Integer> -> TypeList
 
 TypeList<>::Erase<0, 0> == TypeList<>

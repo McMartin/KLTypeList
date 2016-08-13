@@ -1,3 +1,5 @@
+# Copyright (c) 2015-2016 Alain Martin
+
 Clear -> TypeList
 
 TypeList<>::Clear == TypeList<>

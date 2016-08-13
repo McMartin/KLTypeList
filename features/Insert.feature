@@ -1,3 +1,5 @@
+# Copyright (c) 2014-2016 Alain Martin
+
 Insert<Integer, Type> -> TypeList
 
 TypeList<>::Insert<0, A> == TypeList<A>

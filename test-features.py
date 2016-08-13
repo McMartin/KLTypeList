@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
-# Copyright (c) 2014 Alain Martin
-
+# Copyright (c) 2014-2016 Alain Martin
 
 import argparse
 import ast
@@ -247,7 +246,7 @@ def test_feature_file(feature_file_path, compiler):
 
     with open(feature_file_path, 'r') as feature_file:
         for line in feature_file:
-            if not line.isspace():
+            if not (line.isspace() or line.startswith('# ')):
                 line = line.rstrip()
 
                 if feature is None:

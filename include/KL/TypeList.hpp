@@ -1,9 +1,9 @@
-// Copyright (c) 2014 Alain Martin
+// Copyright (c) 2014-2016 Alain Martin
 
-#ifndef KL_TYPE_LIST
-#define KL_TYPE_LIST
+#pragma once
 
 #include "internal/InternalTypeList.hpp"
+
 
 namespace KL
 {
@@ -53,6 +53,7 @@ struct TypeList : public InternalTypeList<TypeList>
     using Reverse = typename InternalReverse::impl<Pack...>::type;
 };
 
+
 template <>
 struct TypeList<> : public InternalTypeList<TypeList>
 {
@@ -88,5 +89,3 @@ struct TypeList<> : public InternalTypeList<TypeList>
 };
 
 } // namespace KL
-
-#endif // KL_TYPE_LIST

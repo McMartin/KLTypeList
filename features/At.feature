@@ -1,3 +1,5 @@
+# Copyright (c) 2014-2016 Alain Martin
+
 At<Integer> -> Type
 
 TypeList<>::At<0> NOT COMPILE

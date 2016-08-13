@@ -1,0 +1,14 @@
+clone_depth: 50
+
+branches:
+  only:
+    - master
+
+environment:
+  matrix:
+    - COMPILER: msvc_2013
+
+build: off
+
+test_script:
+  - python test-features.py --compiler compilers/%COMPILER%.py
