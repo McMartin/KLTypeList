@@ -1,21 +1,21 @@
 language: cpp
 
 branches:
-    only:
-        - master
+  only:
+    - master
 
 env:
-    matrix:
-        - COMPILER=clang++-3.4
-        - COMPILER=g++-4.7
-        - COMPILER=g++-4.8
-        - COMPILER=g++-4.9
+  matrix:
+    - COMPILER=clang++-3.4
+    - COMPILER=g++-4.7
+    - COMPILER=g++-4.8
+    - COMPILER=g++-4.9
 
 install:
-    - sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
-    - sudo apt-get update
-    - sudo apt-get install $COMPILER
-    - sudo apt-get install python
+  - sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
+  - sudo apt-get update
+  - sudo apt-get install $COMPILER
+  - sudo apt-get install python
 
 script:
-    - python test-features.py --compiler compilers/$COMPILER.py
+  - python test-features.py --compiler compilers/$COMPILER.py
