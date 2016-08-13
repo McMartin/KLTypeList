@@ -1,4 +1,4 @@
-# Copyright (c) 2015 Alain Martin
+# Copyright (c) 2015-2016 Alain Martin
 
 {
     'exe': 'g++-4.9',

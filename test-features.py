@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
-# Copyright (c) 2014 Alain Martin
-
+# Copyright (c) 2014-2016 Alain Martin
 
 import argparse
 import ast

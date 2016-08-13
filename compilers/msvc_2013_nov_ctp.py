@@ -1,4 +1,4 @@
-# Copyright (c) 2014 Alain Martin
+# Copyright (c) 2014-2016 Alain Martin
 
 {
     'exe': 'C:/Program Files (x86)/Microsoft Visual C++ Compiler Nov 2013 CTP/bin/cl.exe',
